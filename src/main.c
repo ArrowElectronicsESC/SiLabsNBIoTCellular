@@ -26,12 +26,18 @@
  * certificate validation.Production code should implement certificate validation.
  ******************************************************************************/
 
+// fix xbee_config.c: test hologram first
+// check that APN is set correctly
 #include <stdio.h>
 #include <stdlib.h>
 #include "em_device.h"
 #include "em_cmu.h"
 #include "em_chip.h"
 #include "em_emu.h"
+
+#ifndef LCDLOG
+#include "uart.h"	// include for serial terminal printing
+#endif
 
 #include "display.h"
 #include "textdisplay.h"
@@ -65,6 +71,7 @@
 
 #include "iot_config.h"
 
+//#include <retargetserial.h> // retarget serial
 /*
  *********************************************************************************************************
  *********************************************************************************************************
@@ -73,26 +80,28 @@
  *********************************************************************************************************
  */
 
-#define  MAIN_START_TASK_PRIO              21u
-#define  MAIN_START_TASK_STK_SIZE          2048u
+#define  MAIN_START_TASK_PRIO              	21u
+#define  MAIN_START_TASK_STK_SIZE          	2048u
 
-#define  LOCAL_IN_TASK_PRIO             	 26u //Below Cellular priority to prevent conflict
-#define  LOCAL_IN_TASK_STK_SIZE				     1024u
+#define  LOCAL_IN_TASK_PRIO             	26u //Below Cellular priority to prevent conflict
+#define  LOCAL_IN_TASK_STK_SIZE				1024u
 
-#define  CELL_TX_TASK_PRIO             	   20u
-#define  CELL_TX_TASK_STK_SIZE				     1024u
+#define  CELL_TX_TASK_PRIO             	   	20u
+#define  CELL_TX_TASK_STK_SIZE				1024u
 
 //ECB TODO Add Cell RX here
 
-#define LOCAL_IN_BUFF_LEN                 256u //This will be the max command length
+#define LOCAL_IN_BUFF_LEN                 	256u //This will be the max command length
 
-#define  XBEE_TARGET_BAUD                 115200
-#define  TEMP_UPLOAD_PERIOD               30 /* (Seconds) */
-#define  LED_DOWNLOAD_PERIOD              10 /* (Seconds) */
+#define  XBEE_TARGET_BAUD                 	115200
+#define  TEMP_UPLOAD_PERIOD               	30 /* (Seconds) */
+#define  LED_DOWNLOAD_PERIOD              	10 /* (Seconds) */
 
 #define BUTTON_PORT							gpioPortC
 #define BUTTON0_PIN							8u
 #define BUTTON1_PIN 						9u
+
+//#define LCDLOG									// establishes LCD or Terminal logging
 
 /*
  *********************************************************************************************************
@@ -124,7 +133,7 @@ OS_SEM CellTXBuffSem; //Flag to say data is ready in local_in_buff
 OS_MUTEX CellTXBuffMutex; //Mutex to prevent concurrent access to the buffer AND count
 
 char local_in_buff[LOCAL_IN_BUFF_LEN] = { NULL }; //Buffer to transfer data between tasks
-uint32_t local_in_buff_count = 0; //lenght of data in buffer - Must be updated w/ every snprintf or strcpy
+uint32_t local_in_buff_count = 0; //length of data in buffer - Must be updated w/ every snprintf or strcpy
 
 //ECB Todo add Cell RX and/or wifi details here
 
@@ -139,22 +148,40 @@ uint32_t local_in_buff_count = 0; //lenght of data in buffer - Must be updated w
 static void mainStartTask(void *p_arg);
 static void localInTask(void *p_arg);
 static void cellTXTask(void *p_arg);
-static void createDataStreams(void); //Not used
+//static void createDataStreams(void); //Not used
 static void printDeviceDescription(void);
 static void initCommandLayer(void);
-static int updateLeds(void); //Not Used
-static int updateTemp(void); //Not Used
+//static int updateLeds(void); //Not Used
+//static int updateTemp(void); //Not Used
 static int initXBee(void);
 void clearScreen(void);
+void clearTerminal(void);
+
+//****************************************
+//global variables
+//****************************************
+bool FRAME0 = true;
 
 void clearScreen(void) { //Its sloppy - I know
-	int i, j;
+	int i;
 	for (i = 0; i < 20; i++) {
 		//for(j = 0; j < 20; j++){
 		printf("                     "); //Print 20 spaces to "Clear" the screen
 		//}
 	}
 }
+
+void clearTerminal()
+{
+	USART_Tx(USART4, 27);
+	USART_Tx(USART4, '[');
+	USART_Tx(USART4, '2');
+	USART_Tx(USART4, 'J');
+	USART_Tx(USART4, 27);
+	USART_Tx(USART4, '[');
+	USART_Tx(USART4, 'H');
+}
+
 
 int main(void) {
 	RTOS_ERR err;
@@ -177,6 +204,17 @@ int main(void) {
 	setupRgbLed1();
 	/* Setup temperature and RH sensor */
 	initTempSensor();
+
+	/* setup uart if printing to terminal*/
+#ifndef LCDLOG
+	uartInit();
+#endif
+	// attempt to use retarget serial to change printf() functionality - didnt work at all haha
+//#ifdef TERMINALDEBUG
+//	RETARGET_SerialInit();
+//	GPIO_PinModeSet(gpioPortE, 1, gpioModePushPull, 1);		// virtual COM port enable
+//#endif
+
 	//binary variable to determine whose turn to access data
 	OSMutexCreate(&CellTXBuffMutex, "CELL Tx Buff/Cnt MTX", &err);
 	//variable says data ready for moving
@@ -276,66 +314,138 @@ static int initXBee(void) {
 	ser1.baudrate = XBEE_TARGET_BAUD;
 	/* Initialize the XBee device (identifies device) */
 	if (xbee_dev_init(&myXbee, &ser1, NULL, NULL)) {
+#ifdef LCDLOG
 		printf("\fCould not open communication with XBee\n");
 		return -EIO;
+#else
+		char message[] = "Could not open communication with XBee\r\n";
+		for(int i = 0; i < sizeof(message) / sizeof(char); i++){
+			USART_Tx(USART4, message[i]);
+		}
+		return -EIO;
+#endif
 	}
 
 #if defined(XBEE_DEMO_CONFIG) && defined(XBEE_DEMO_HOLOGRAM_SIM)
-	printf("\fConfigure XBee for \nHologram SIM");
-	int retval = configureXbeeForHologramSim();
-	if (retval) {
-		printf("\fFailed to config XBee\n"
-				"for Hologram SIM.\n"
-				"\nCheck that the XBee\n"
-				"is powered and is\n"
-				"connected properly");
+#ifdef LCDLOG
+		printf("\fConfigure XBee for \nHologram SIM");
+//		int retval = configureXbeeForHologramSim();
+		int retval = 0;		// just to move on faster
+		if (retval) {
+			printf("\fFailed to config XBee\n"
+					"for Hologram SIM.\n"
+					"\nCheck that the XBee\n"
+					"is powered and is\n"
+					"connected properly");
+			return retval;
+		}
+#else
+		char message[100] = "\fConfigure XBee for Hologram SIM\r\n\r\n";		// waste of memory i know, ill come back
+		uartSend(message);
+//		int retval = configureXbeeForHologramSim();
+		int retval = 0; // prevent return error while xbee is not connected
+		if (retval) {
+		strcpy(message, "Failed to config XBee "
+				"for Hologram SIM. "
+				"Check that the XBee "
+				"is powered and is "
+				"connected properly\r\n");
+		uartSend(message);
 		return retval;
-	}
+		}
+#endif
 #endif
 
 	/* Command layer initialization (AT commands) */
-	printf("\fInitializing");
+#ifdef LCDLOG
+	printf("\fInitializing\n");
+#else
+	strcpy(message, "Initializing\r\n");
+	uartSend(message);
+#endif
 	initCommandLayer();
 
 	/* Check for successful communication with the XBee */
 	if (myXbee.hardware_version == 0) {
+#ifdef LCDLOG
 		printf("\fFailed to initialize\nattempting to\nreconfigure the XBee\n");
+#else
+		strcpy(message, "Failed to initialize, attempting to reconfigure the XBee\r\n");
+		uartSend(message);
+#endif
+
 #if defined(XBEE_DEMO_CONFIG) && !defined(XBEE_DEMO_HOLOGRAM_SIM)
 		if (configureXBee(&myXbee,
 						XBEE_TARGET_BAUD,
 						XBEE_CONFIG_MODE_API,
 						XBEE_CONFIG_CARRIER_AUTO_DETECT,
 						TRUE)) {
+#ifdef LCDLOG
 			printf("\fFailed to config\n"
 					"check that the XBee\n"
 					"is powered and is\n"
 					"connected properly");
+#else
+			strcpy(message, "Failed to config "
+					"check that the XBee "
+					"is powered and is "
+					"connected properly\r\n")
+			uartSend(message);
 			return -EIO;
+#endif
 		}
-
 		/* Reinitialize with correct settings */
 		myXbee.flags &= ~XBEE_DEV_FLAG_CMD_INIT;
 		myXbee.flags &= ~XBEE_DEV_FLAG_QUERY_BEGIN;
+#ifdef LCDLOG
 		printf("\fInitializing");
+#else
+		strcpy(message, "Initializing\r\n");
+		uartSend(message);
 		initCommandLayer();
-
+#endif
 #else
 		/* Without the config code, we cannot continue */
+#ifdef LCDLOG
 		printf("\nCould not reconfig,\ninclude config code");
+#else
+		strcpy(message, "Could not reconfig, include config code\r\n");
+		uartSend(message);
+#endif
 		return -EIO;
 #endif
 	}
 
 #if defined(XBEE_DEMO_CONFIG) && defined(XBEE_CHANGE_APN)
 	/* Attempt to Apply the correct APN as defined by XBEE_TARGET_APN */
+#ifdef LCDLOG
 	printf("\fAttempting to apply\nthe new APN\n");
+#else
+	strcpy(message, "Attempting to apply the new APN\r\n");
+	uartSend(message);
+#endif
 	int ret = configureAPN(&myXbee);
 	if (ret < 0) {
+#ifdef LCDLOG
 		printf("\fFailed to apply\nthe new APN\n");
+#else
+		strcpy(message, "Failed to apply the new APN \r\n\r\n");
+		uartSend(message);
+#endif
 	} else if (ret == 1) {
+#ifdef LCDLOG
 		printf("The APN was already\nset correctly!\n");
+#else
+		strcpy(message, "The APN was already set correctly!\r\n\r\n");
+		uartSend(message);
+#endif
 	} else {
+#ifdef LCDLOG
 		printf("The new APN has been\nset correctly!\n");
+#else
+		strcpy(message, "the new APN has been set correctly!\r\n\r\n");
+		uartSend(message);
+#endif
 	}
 #endif
 
@@ -372,132 +482,147 @@ static int strFixedPt(char *buffer, size_t bufsz, int32_t k) {
 /***************************************************************************//**
  * @brief Makes the required data streams if they do not already exist on RM
  ******************************************************************************/
-static void createDataStreams(void) {
-	printf("\fCreating Data Streams\n");
-	bool initTemperature = 0;
-	bool initRGB = 0;
-	int retries = 0;
-	int i;
-	RTOS_ERR err;
-
-	/* Use flags to confirm that both streams have been created successfully */
-	while (!(initTemperature && initRGB)) {
-		checkConnection(&myXbee);
-
-		/* Print information about the connection */
-		printf("\033[H" "\nCTS:%d TX:0x%.2X AI:%.1d\n",
-				xbee_ser_get_cts(&(myXbee.serport)), getLastTXStatus(),
-				myXbee.wpan_dev.flags & WPAN_FLAG_JOINED);
-
-		if (!initTemperature) {
-			/*initTemperature = (initCloudDataStream("Temperature", "DOUBLE", "Celsius", 10))
-			 ?  0 : 1;*/
-			initTemperature = 1;
-		}
-		if (!initRGB) {
-			/*initRGB = (initCloudDataStream("RGB", "STRING", "RGB", 10))
-			 ?  0 : 1;*/
-			initRGB = 1;
-		}
-
-		OSTimeDly(300, OS_OPT_TIME_DLY, &err);
-		printf("\033[H" "\n\n");
-		for (i = 0; i < retries; i++) {
-			printf(".");
-		}
-		if (retries++ > 100) {
-			printf("\fFailed to create streams\n"
-					"make sure your credentials,\n"
-					"remote manager URI and\n"
-					"permissions allow for posting\n"
-					"to remote manager (reset)\n");
-			while (1) {
-			} /* Block and wait for reset */
-		}
-	}
-
-	printf("\fCreated Data Streams!\n");
-	OSTimeDly(300, OS_OPT_TIME_DLY, &err);
-}
-
-/***************************************************************************//**
- * @brief Pushes new temperature information to the remote manager
- ******************************************************************************/
-static int updateTemp(void) {
-	static uint32_t lastSend = 0;
-	char data[32];
-	char gnssDat[64];
-	int ret = 0;
-	uint32_t rh = 0;
-	int32_t tmp = 0;
-
-	ret = tempSensorReadHumTemp(&rh, &tmp);
-	if (ret < 0) {
-		return ret;
-	}
-
-	/* If we are due to upload data */
-	if (TEMP_UPLOAD_PERIOD <= xbee_seconds_timer() - lastSend) {
-		if (strFixedPt(data, sizeof(data), tmp) < 0) {
-			ret = snprintf(data, sizeof(data), "ERROR: ENCODING");
-		}
-		/* Check for viable GNSS data */
-		if (gnssSln(&sln) == 0 && sln.fixOK) {
-			sprintf(gnssDat, "[%i.%07i, %i.%07i, %i.%03i]",
-					(sln.lon / 10000000), abs(sln.lon % 10000000), // 10**-7 deg
-					(sln.lat / 10000000), abs(sln.lat % 10000000), // 10**-7 deg
-					(sln.height / 1000), abs(sln.height % 1000)); // 10**-3 m)
-			ret = sendDataToCloud(data, "Temperature", "DOUBLE", gnssDat, 10);
-		} else {
-			ret = sendDataToCloud(data, "Temperature", "DOUBLE", NULL, 10);
-		}
-		/* If the send was successful then update timer and display data */
-		if (ret == 0) {
-			lastSend = xbee_seconds_timer();
-			printf("temp (C):\n%.7s             \n", data);
-		}
-	}
-	return ret;
-}
-
-/***************************************************************************//**
- * @brief Requests new LED values from the remote manager and then changes LEDs
- ******************************************************************************/
-static int updateLeds(void) {
-	static uint32_t lastSend = 0;
-	char data[32];
-	uint32_t r, g, b;
-	int ret;
-
-	if (LED_DOWNLOAD_PERIOD <= xbee_seconds_timer() - lastSend) {
-		ret = getDataFromCloud(data, "RGB", 10);
-		/* Update colors and display only if we goto valid data */
-		if (ret == 0) {
-			lastSend = xbee_seconds_timer();
-
-			if (sscanf(data, "%" PRIu32 " , %" PRIu32 " , %" PRIu32, &r, &g, &b)
-					== 3) {
-				/* Must be less than or equal to PWM_STEPS (255) */
-				if (r > PWM_STEPS) {
-					r = PWM_STEPS;
-				}
-				if (g > PWM_STEPS) {
-					g = PWM_STEPS;
-				}
-				if (b > PWM_STEPS) {
-					b = PWM_STEPS;
-				}
-
-				setLed1(r, g, b);
-				printf("RGB:\n%" PRIu32 ",%" PRIu32 ",%" PRIu32 "      \n", r,
-						g, b);
-			} else {
-				printf("RGB:\nMalfromed\n");
-			}
-		}
-	}
-	return ret;
-}
+//static void createDataStreams(void) {
+//
+//#ifdef LCDLOG
+//	printf("\fCreating Data Streams\n");
+//#else
+//	char message[100] = "Creating Data Streams\r\n";
+//	uartSend(message);
+//#endif
+//	bool initTemperature = 0;
+//	bool initRGB = 0;
+//	int retries = 0;
+//	int i;
+//	RTOS_ERR err;
+//
+//	/* Use flags to confirm that both streams have been created successfully */
+//	while (!(initTemperature && initRGB)) {
+//	//	checkConnection(&myXbee);
+//
+//		/* Print information about the connection */
+//#ifdef LCDLOG
+//		printf("\033[H" "\nCTS:%d TX:0x%.2X AI:%.1d\n",
+//				xbee_ser_get_cts(&(myXbee.serport)), getLastTXStatus(),
+//				myXbee.wpan_dev.flags & WPAN_FLAG_JOINED);
+//#else
+//		int cts = xbee_ser_get_cts(&(myXbee.serport));
+//		int txStatus = getLastTXStatus();
+//		int AI = myXbee.wpan_dev.flags & WPAN_FLAG_JOINED;
+////		strcpy(message, "\033[HCTS:");
+////		strcat((((strcat(strcat(message, (char) cts), "TX:0x"),(char) txStatus),"AI:") ,(char) AI),"\r\n");
+////		uartSend(message);
+//#endif
+//
+//		if (!initTemperature) {
+//			/*initTemperature = (initCloudDataStream("Temperature", "DOUBLE", "Celsius", 10))
+//			 ?  0 : 1;*/
+//			initTemperature = 1;
+//		}
+//		if (!initRGB) {
+//			/*initRGB = (initCloudDataStream("RGB", "STRING", "RGB", 10))
+//			 ?  0 : 1;*/
+//			initRGB = 1;
+//		}
+//
+//		OSTimeDly(300, OS_OPT_TIME_DLY, &err);
+//		printf("\033[H" "\n\n");
+//		for (i = 0; i < retries; i++) {
+//			printf(".");
+//		}
+//		if (retries++ > 100) {
+//			printf("\fFailed to create streams\n"
+//					"make sure your credentials,\n"
+//					"remote manager URI and\n"
+//					"permissions allow for posting\n"
+//					"to remote manager (reset)\n");
+//			while (1) {
+//			} /* Block and wait for reset */
+//		}
+//	}
+//
+//	printf("\fCreated Data Streams!\n");
+//	OSTimeDly(300, OS_OPT_TIME_DLY, &err);
+//}
+//
+///***************************************************************************//**
+// * @brief Pushes new temperature information to the remote manager
+// ******************************************************************************/
+//static int updateTemp(void) {
+//	static uint32_t lastSend = 0;
+//	char data[32];
+//	char gnssDat[64];
+//	int ret = 0;
+//	uint32_t rh = 0;
+//	int32_t tmp = 0;
+//
+//	ret = tempSensorReadHumTemp(&rh, &tmp);
+//	if (ret < 0) {
+//		return ret;
+//	}
+//
+//	/* If we are due to upload data */
+//	if (TEMP_UPLOAD_PERIOD <= xbee_seconds_timer() - lastSend) {
+//		if (strFixedPt(data, sizeof(data), tmp) < 0) {
+//			ret = snprintf(data, sizeof(data), "ERROR: ENCODING");
+//		}
+//		/* Check for viable GNSS data */
+//		if (gnssSln(&sln) == 0 && sln.fixOK) {
+//			sprintf(gnssDat, "[%i.%07i, %i.%07i, %i.%03i]",
+//					(sln.lon / 10000000), abs(sln.lon % 10000000), // 10**-7 deg
+//					(sln.lat / 10000000), abs(sln.lat % 10000000), // 10**-7 deg
+//					(sln.height / 1000), abs(sln.height % 1000)); // 10**-3 m)
+//			ret = sendDataToCloud(data, "Temperature", "DOUBLE", gnssDat, 10);
+//		} else {
+//			ret = sendDataToCloud(data, "Temperature", "DOUBLE", NULL, 10);
+//		}
+//		/* If the send was successful then update timer and display data */
+//		if (ret == 0) {
+//			lastSend = xbee_seconds_timer();
+//			printf("temp (C):\n%.7s             \n", data);
+//		}
+//	}
+//	return ret;
+//}
+//
+///***************************************************************************//**
+// * @brief Requests new LED values from the remote manager and then changes LEDs
+// ******************************************************************************/
+//static int updateLeds(void) {
+//	static uint32_t lastSend = 0;
+//	char data[32];
+//	uint32_t r, g, b;
+//	int ret;
+//
+//	if (LED_DOWNLOAD_PERIOD <= xbee_seconds_timer() - lastSend) {
+//		ret = getDataFromCloud(data, "RGB", 10);
+//		/* Update colors and display only if we goto valid data */
+//		if (ret == 0) {
+//			lastSend = xbee_seconds_timer();
+//
+//			if (sscanf(data, "%" PRIu32 " , %" PRIu32 " , %" PRIu32, &r, &g, &b)
+//					== 3) {
+//				/* Must be less than or equal to PWM_STEPS (255) */
+//				if (r > PWM_STEPS) {
+//					r = PWM_STEPS;
+//				}
+//				if (g > PWM_STEPS) {
+//					g = PWM_STEPS;
+//				}
+//				if (b > PWM_STEPS) {
+//					b = PWM_STEPS;
+//				}
+//
+//				setLed1(r, g, b);
+//				printf("RGB:\n%" PRIu32 ",%" PRIu32 ",%" PRIu32 "      \n", r,
+//						g, b);
+//			} else {
+//				printf("RGB:\nMalfromed\n");
+//			}
+//		}
+//	}
+//	return ret;
+//}
 
 /***************************************************************************//**
  * @brief Helper Function for initializing the command layer
@@ -516,15 +641,23 @@ static bool isCmdQueryFinished(xbee_dev_t *xbee) {
  ******************************************************************************/
 static void initCommandLayer(void) {
 	RTOS_ERR err;
-	printf("\fInitializing");
+
 	xbee_cmd_init_device(&myXbee);
 	/* Wait for XBee to respond */
 	while (!isCmdQueryFinished(&myXbee)) {
 		xbee_dev_tick(&myXbee);
+#ifdef LCDLOG
 		printf(".");
+#else
+		char message[100] = ".";
+		uartSend(message);
+#endif
 		OSTimeDly(100, OS_OPT_TIME_DLY, &err);
 		APP_RTOS_ASSERT_DBG((RTOS_ERR_CODE_GET(err) == RTOS_ERR_NONE), ;);
 	}
+#ifndef LCDLOG
+	uartSend("\r\n\r\n");
+#endif
 }
 
 /***************************************************************************//**
@@ -569,7 +702,6 @@ static void localInTask(void *p_arg) {
 		OSTimeDly(10, OS_OPT_TIME_DLY, &err); //This will Update as much as possible but needs to yield to TX
 	}
 }
-
 /***************************************************************************//**
  * @brief takes data from the Local in Buffer, formats, and sends as an HTTP Post
  ******************************************************************************/
@@ -581,13 +713,6 @@ static void cellTXTask(void *p_arg) {
 	uint32_t iterations = 0;
 	char local_in_cpy[LOCAL_IN_BUFF_LEN];
 	httpClientInitConnection(&myXbee, FALSE);
-
-	// Andy
-    CMU_ClockEnable(cmuClock_GPIO, true);
-	GPIO_PinModeSet(BUTTON_PORT, BUTTON0_PIN, gpioModeInput, 0);
-	GPIO_PinModeSet(BUTTON_PORT, BUTTON1_PIN, gpioModeInput, 0);
-  //	GPIO_PinModeSet(gpioPortH, 10, gpioModePushPull, 0); // red LED0 for debugging
-
 	OSTaskCreate(&localInTaskTCB, /* Create the Local in Task.*/
 	"Local In Task", localInTask,
 	DEF_NULL,
@@ -609,12 +734,29 @@ static void cellTXTask(void *p_arg) {
 		OSMutexPost(&CellTXBuffMutex, OS_OPT_POST_NONE, &err);
 		//ECB TODO Format data here?
 		clearScreen(); //Still sloppy, but it makes the readout pretty
+#ifdef LCDLOG
 		printf("\033[H" "\tSending Data: %s       \r\n", local_in_cpy);
+#else
+		char message[100] = "Sending Data: ";
+		strcat(strcat(message, local_in_cpy), "\r\n");
+		uartSend(message);
+#endif
 		setLed1(16000, 0, 0); //Set red for sending
-		sendDataToCloud(local_in_cpy, (const char *) NULL,
+//		int var = sendDataToCloud(local_in_cpy, (const char *) NULL,
+//				(const char *) requestType, (char *) NULL, -1);
+		char testsend[] = "A";
+		int var = sendDataToCloud(testsend, (const char *) NULL,
 				(const char *) requestType, (char *) NULL, -1);
-		setLed1(0, 16000, 0); //Set green for sent//This is usually to quick to see
+		sprintf(message, "Sent full packet. Error code is %d\r\n\r\n", var);
+		uartSend(message);
+		setLed1(0, 16000, 0); //Set green for sent This is usually to quick to see
+
+#ifdef LCDLOG
 		printf("\033[H" "\n\n\nSend Success\r\n"); //Prints on 4th line
+#else
+		strcpy(message, "Send Success\r\n\r\n");
+		uartSend(message);
+#endif
 		local_in_cpy[0] = (char) NULL;
 		OSSemSet(&CellTXBuffSem, 0, &err); //Reset the SEM to ensure we have a new reading on the next send
 #ifdef DEV_DATA_LIMIT
@@ -624,9 +766,19 @@ static void cellTXTask(void *p_arg) {
 					(OS_OPT) OS_OPT_PEND_BLOCKING, (CPU_TS*) &ts,
 					(RTOS_ERR*) &err);
 			clearScreen();
+#ifdef LCDLOG
 			printf(
-					"\033[H" "DEV MODE:\r\nMAX DATA SENT\r\nSENT %d UPDATES\r\nHALTING ALL TASKS",
+					"\033[H" "DEV MODE:\r\nMAX DATA SENT\r\nSENT %d UPDATES\r\nHALTING ALL TASKS\r\n\r\nPress button 0 to send all packets again. Press button 1 to send one more packet.\r\n\r\n",
 					iterations);
+#else
+			strcpy(message, "DEV MODE:\r\nMAX DATA SENT\r\nSENT ");
+			char numAsc[2];
+			itoa(iterations, numAsc, 10);
+			strcat(strcat(message, numAsc), " UPDATES\r\nHALTING ALL TASKS\r\n\r\n");
+			uartSend(message);
+			strcpy(message, "Press button 0 to send all packets again. Press button 1 to send one more packet.\r\n\r\n");
+			uartSend(message);
+#endif
 			while (1) {
 				if(!GPIO_PinInGet(BUTTON_PORT, BUTTON0_PIN)){  // pb0 send all again
 					iterations = 0;
@@ -649,6 +801,7 @@ static void cellTXTask(void *p_arg) {
  * @brief Prints relevant information about the connected XBee
  ******************************************************************************/
 static void printDeviceDescription(void) {
+#ifdef LCDLOG
 	printf("\fHardware Version:\n%x\n"
 			"Firmware Version:\n%x\n"
 			"Baud Rate:\n%u\n"
@@ -656,6 +809,17 @@ static void printDeviceDescription(void) {
 			(unsigned int) myXbee.firmware_version,
 			(unsigned int) myXbee.serport.baudrate,
 			(WPAN_DEV_IS_JOINED(&(myXbee.wpan_dev))));
+#else
+	char message[100];
+	sprintf(message, "\fHardware Version: %x\r\n"
+				"Firmware Version: %x\r\n"
+				"Baud Rate: %u\r\n"
+				"Connection: %d\r\n\r\n", (unsigned int) myXbee.hardware_version,
+				(unsigned int) myXbee.firmware_version,
+				(unsigned int) myXbee.serport.baudrate,
+				(WPAN_DEV_IS_JOINED(&(myXbee.wpan_dev))));
+	uartSend(message);
+#endif
 }
 
 static void mainStartTask(void *p_arg) {
@@ -667,11 +831,24 @@ static void mainStartTask(void *p_arg) {
 
 	Common_Init(&err); /* Call common module initialization example.           */
 
-
+#ifdef LCDLOG
+	clearScreen();
+	printf("Starting Application...\r\n\r\n");
+#else
+	char message[100];
+	clearTerminal();
+	strcpy(message, "Starting Application...\r\n\r\n");
+	uartSend(message);
+#endif
+	/* button initialization */
+	CMU_ClockEnable(cmuClock_GPIO, true);
+	GPIO_PinModeSet(BUTTON_PORT, BUTTON0_PIN, gpioModeInput, 0);
+	GPIO_PinModeSet(BUTTON_PORT, BUTTON1_PIN, gpioModeInput, 0);
+	//GPIO_PinModeSet(gpioPortH, 10, gpioModePushPull, 0); // red LED0 for debugging
 
 	APP_RTOS_ASSERT_CRITICAL(err.Code == RTOS_ERR_NONE, ;);
 
-	gnssInit();
+	//gnssInit();
 
 	/* Give time for the xbee to power up */
 	OSTimeDly(1000, OS_OPT_TIME_DLY, &err);
@@ -695,14 +872,48 @@ static void mainStartTask(void *p_arg) {
 	myXbee.wpan_dev.flags &= ~(WPAN_FLAG_JOINED);
 
 	/* Blocking wait for a cell connection */
+#ifdef LCDLOG
 	printf("\fWait for cell signal\n");
+#else
+	strcpy(message, "Wait for cell signal\r\n");
+	uartSend(message);
+#endif
 	do {
 		checkConnection(&myXbee);
 		OSTimeDly(500, OS_OPT_TIME_DLY, &err);
+#ifdef LCDLOG
 		printf(".");
-	} while (0); //(!(myXbee.wpan_dev.flags & WPAN_FLAG_JOINED));
-
-	printf("\033[H" "\tInitialized\nStarting New Tasks");
+#else
+		strcpy(message, ".");
+		uartSend(message);
+#endif
+	} while (!(myXbee.wpan_dev.flags & WPAN_FLAG_JOINED));		// make sure cell connection formed before moving on
+#ifdef LCDLOG
+	clearScreen();
+#else
+	uartSend("\r\n\r\n");
+#endif
+#ifdef LCDLOG
+	printf("\033[H""Initialized. Starting New Tasks\r\n\r\nPress any button to continue\r\n\r\n");
+#else
+	strcpy(message, "Initialized. Starting New Tasks\r\nPress any button to continue\r\n\r\n");
+	uartSend(message);
+#endif
+//while(1)
+//	{
+//		if(!GPIO_PinInGet(BUTTON_PORT, BUTTON0_PIN)){
+//			break;
+//		}
+//		else if(!GPIO_PinInGet(BUTTON_PORT, BUTTON1_PIN)){
+//			break;
+//		}
+//	}
+#ifdef LCDLOG
+	printf("Attempting to send...Please wait\r\n\r\n");
+#else
+	strcpy(message, "Attempting to send... Please wait\r\n\r\n");
+	uartSend(message);
+#endif
 	OSTimeDly(500, OS_OPT_TIME_DLY, &err);
 
 //	Moved this to cellTxTask to prevent input being lost during cellular config

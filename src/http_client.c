@@ -50,6 +50,7 @@ static int txStat = 0xFF;
 
 static int credLen = HTTP_AUTHENTICATION_SIZE;
 static char credentials[HTTP_AUTHENTICATION_SIZE] = { 0 };
+extern bool FRAME0;
 
 /* Contains necessary data for state machines */
 static struct HttpReceiveContext
@@ -509,26 +510,29 @@ int httpClientSend(xbee_ipv4_envelope_t *env,
     temp = env->xbee->frame_id;
     sendContext.frame_id = xbee_next_frame_id(env->xbee);
     env->xbee->frame_id = temp;
-
+    char msg[50];
     ret = xbee_ipv4_envelope_send(env);
-    while (sendContext.state != HTTP_SEND_DONE)
+    while (sendContext.state != HTTP_SEND_DONE)			//andy gets stuck here
     {
         while (sendContext.state == HTTP_SEND_WAIT)
         {
+
             if (ret != 0)
             {
                 sendContext.state = HTTP_SEND_ERROR;
                 ++failures;
                 return ret;
             }
-            xbee_dev_tick(env->xbee);
-
+            int retval = xbee_dev_tick(env->xbee);
+//            sprintf(msg, "Return value is: %d\r\n", retval);
+//            uartSend(msg);
             if (xbee_seconds_timer() >= (uint32_t) timeout && timeout >= 0)
             {
                 sendContext.state = HTTP_SEND_ERROR;
                 return -ETIMEDOUT;
             }
         }
+    	__BKPT(0);
         if (sendContext.state == HTTP_SEND_DONE)
         {
             failures = 0;
@@ -549,6 +553,58 @@ int httpClientSend(xbee_ipv4_envelope_t *env,
 
         ret = xbee_ipv4_envelope_send(env);
     }
+
+    /* second frame send and wait before data packet sent */
+    if(!FRAME0)
+    {
+    	sendContext.state = HTTP_SEND_WAIT;
+		txStat = 0xFF;
+		temp = env->xbee->frame_id;
+		sendContext.frame_id = xbee_next_frame_id(env->xbee);
+		env->xbee->frame_id = temp;
+    	ret = xbee_ipv4_envelope_send(env);
+    	while (sendContext.state != HTTP_SEND_DONE)			//andy gets stuck here
+    	{
+			while (sendContext.state == HTTP_SEND_WAIT)
+			{
+
+				if (ret != 0)
+				{
+					sendContext.state = HTTP_SEND_ERROR;
+					++failures;
+					return ret;
+				}
+				int retval = xbee_dev_tick(env->xbee);
+		//            sprintf(msg, "Return value is: %d\r\n", retval);
+		//            uartSend(msg);
+				if (xbee_seconds_timer() >= (uint32_t) timeout && timeout >= 0)
+				{
+					sendContext.state = HTTP_SEND_ERROR;
+					return -ETIMEDOUT;
+				}
+			}
+			if (sendContext.state == HTTP_SEND_DONE)
+			{
+				failures = 0;
+				break;
+			}
+			if (txStat == 0x32)
+			{
+				sendContext.state = HTTP_SEND_ERROR;
+				++failures;
+				return -EBUSY;
+			}
+			sendContext.state = HTTP_SEND_WAIT;
+
+			/* Store the next frame ID in context (without incrementing it) */
+			temp = env->xbee->frame_id;
+			sendContext.frame_id = xbee_next_frame_id(env->xbee);
+			env->xbee->frame_id = temp;
+
+			ret = xbee_ipv4_envelope_send(env);
+    	}
+    }
+    else return 0;
     return 0;
 }
 
@@ -558,7 +614,7 @@ int httpClientSend(xbee_ipv4_envelope_t *env,
 int httpClientRecv(xbee_ipv4_envelope_t *env, int timeout)
 {
     /* If we don't care about response, then skip */
-    if (recvContext.thisRepsonse == NULL)
+	if (recvContext.thisRepsonse == NULL)
     {
         recvContext.state = HTTP_RECEIVE_DONE;
         return 0;
@@ -938,7 +994,7 @@ int sendDataToCloud(char *data,
     recvData.bufLength = HTTP_BUFFER_LEN;
     recvData.contentLength = 0;
 
-    ret = httpClientConnect(&env, POST, HOSTNAME, "/devices/ECB_DEV_0/messages/events?api-version=2018-06-30", &sendData, &recvData, timeout);
+    ret = httpClientConnect(&env, POST, HOSTNAME, "/devices/gecko2/messages/events?api-version=2018-06-30", &sendData, &recvData, timeout);
     if (ret < 0)
     {
         return ret;

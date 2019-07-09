@@ -31,6 +31,8 @@
 #include "xbee/byteorder.h"
 #include "xbee/ipv4.h"
 
+extern bool FRAME0;
+
 int xbee_ipv4_ntoa(char buffer[16], uint32_t ip_be)
 {
 	if (!buffer)
@@ -110,7 +112,8 @@ int xbee_ipv4_envelope_send(const xbee_ipv4_envelope_t FAR *envelope)
 	xbee_dev_t *xbee;
 	xbee_header_transmit_ipv4_t header;
 	int retval;
-	
+	char message[50];
+
 	if (envelope == NULL || envelope->xbee == NULL) {
 		return -EINVAL;
 	}
@@ -141,10 +144,51 @@ int xbee_ipv4_envelope_send(const xbee_ipv4_envelope_t FAR *envelope)
 			envelope->remote_port, envelope->local_port,
 			protocol_string, envelope->options);
 	#endif
-	
-	retval = xbee_frame_write( xbee, &header, sizeof(header), 
+		volatile char msg1[238];
+		volatile char msg2[238];
+	if(envelope->length > 255)
+	{
+		int index = 0;
+
+		for(index = 0; index < 238; index++)
+		{
+			msg1[index] = ((char*)envelope->payload)[index];
+		}
+		msg1[index] = '\0';
+		int i = 0;
+		while(((char*)envelope->payload)[index] != '\0')
+		{
+			msg2[i++] = ((char*)envelope->payload)[index++];
+		}
+		msg2[index] = '\0';
+
+		if(FRAME0)
+		{
+			retval = xbee_frame_write(xbee, &header, sizeof(header),
+						msg1, sizeof(msg1), 0);
+			sprintf(message, "retval xbeeframewrite() for msg1 header is: %d\r\n\r\n", retval);
+			uartSend(message);
+			FRAME0 = false;
+		}
+		else	// frame 1 msg 2 header
+		{
+			retval = xbee_frame_write(xbee, &header, sizeof(header),	// original should be &header, sizeof(header)
+			msg2, sizeof(msg2), 0);
+			sprintf(message, "retval xbeeframewrite() for msg2 header is: %d\r\n\r\n", retval);
+			uartSend(message);
+			FRAME0 = true;
+		}
+	}
+	else
+	{
+	//original
+	retval = xbee_frame_write( xbee, &header, sizeof(header),
 				envelope->payload, envelope->length, 0);
-	
+	__BKPT(0);
+	sprintf(message, "retval xbeeframewrite() for data message is: %d\r\n\r\n", retval);
+	uartSend(message);
+	}
+
 	#ifdef XBEE_IPV4_VERBOSE
 		printf( "%s: %s returned %d\n", __FUNCTION__, "xbee_frame_write", retval);
 	#endif

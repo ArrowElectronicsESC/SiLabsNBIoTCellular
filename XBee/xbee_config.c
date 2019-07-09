@@ -198,16 +198,32 @@ int configureAPN(xbee_dev_t *xbee)
   if ( ret < 0) {
     goto ERR_EXIT;
   }
+  char message[100];
+  sprintf(message, "Existing APN set as %s\r\n\r\n", buff);
+  uartSend(message);
 
   /* Check if the APN is what we expect, if it isn't try to set it */
-  if (strcmp(buff, "-")) { //ECB This is also broken - could not resolve hologram
+  if (strcmp(buff, "arrowiotdemo.com.attz")) { //ECB This is also broken - could not resolve hologram
 
     /* try to set the APN */
-    xbee_atmode_send_request(xbee, "AN""-");
+    xbee_atmode_send_request(xbee, "AN""arrowiotdemo.com.attz");
     ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
     if (ret < 0) {
       goto ERR_EXIT;
     }
+    strcpy(message, "New APN set as arrowiotdemo.com.attz");
+    uartSend(message);
+
+//   xbee_atmode_send_request(xbee, "CN");	// exit command mode
+//   ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+//   if (ret < 0) {
+//	 goto ERR_EXIT;
+//   }
+//    xbee_atmode_send_request(xbee, "AC");	// apply changes and write
+//    ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+//    if (ret < 0) {
+//    goto ERR_EXIT;
+//	}
 
     /* Write settings to non-volatile memory */
     xbee_atmode_send_request(xbee, "WR");
@@ -215,7 +231,9 @@ int configureAPN(xbee_dev_t *xbee)
     if (ret < 0) {
       goto ERR_EXIT;
     }
-
+    char message[100];
+    sprintf(message, "APN set as %s\r\n\r\n", buff);
+    uartSend(message);
     ret = 0;
   }
   else {

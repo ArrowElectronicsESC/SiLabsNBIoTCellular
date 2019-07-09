@@ -8,16 +8,17 @@
 	#define S_HOSTNAME "https://bepplerfamily.com"
 	#define	HTTP_PORT 80
 #else
-	#define HOSTNAME "LTEDEMO.azure-devices.net" //IOT Hub name is the first part of this address
-	#define S_HOSTNAME "https://LTEDEMO.azure-devices.net" //No longer needed (I think...)
+	#define HOSTNAME "ArtisanTemperatureDemo.azure-devices.net" //IOT Hub name is the first part of this address
+	#define S_HOSTNAME "ArtisanTemperatureDemo.azure-devices.net" //No longer needed (I think...)
 	#define	HTTP_PORT 443 //Must use this port and SSP for Azure
 #endif
 //Expires 1/1/2020
-#define SASTOKEN "SharedAccessSignature sr=LTEDEMO.azure-devices.net&sig=0b0Dgp5inuGjhA%2F3pSfQSP48ClODZzX8xF3S6TLjyac%3D&se=1590791131"
+#define SASTOKEN "SharedAccessSignature sr=ArtisanTemperatureDemo.azure-devices.net%2Fdevices%2Fgecko2&sig=8vKMzjYbDIdBlnIGRrM3o6%2B9FxA0XWFL0jrXnwaIQGE%3D&se=1563815703"
+
 //Device name in IOT HUB
-#define DEVICECLIENT "DEV_1"
+#define DEVICECLIENT "gecko2"
 
 //Minimum time between updates (mS)- Will throttle the Cell TX - Set to 0 to remove
 #define MIN_CONN_IVL 1000 //One second delay
 //Maximum updated pushed to cloud - Prevents another crazy data bill....
-#define DEV_DATA_LIMIT 10
+#define DEV_DATA_LIMIT 5

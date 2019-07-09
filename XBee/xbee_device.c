@@ -507,7 +507,8 @@ int xbee_frame_write( xbee_dev_t *xbee, const void FAR *header,
 		uint8_t	start;
 		uint16_t	length_be;
 	} prefix;
-
+	uint16_t testheader = headerlen;
+	uint16_t testdata = datalen;
 	int cts, free, used, framesize;
 	uint8_t checksum = 0xFF;
 	#ifdef XBEE_DEVICE_VERBOSE
@@ -569,6 +570,9 @@ int xbee_frame_write( xbee_dev_t *xbee, const void FAR *header,
 				__FUNCTION__, cts ? "yes" : "no", free, framesize);
 		#endif
 		printf("BROKEN HERE");
+		char message[100];
+		sprintf(message, "Framesize: %d, Free: %d, Used: %d\r\n\r\n", framesize, free, used);
+		uartSend(message);
 		return (framesize - free > used) ? -EMSGSIZE : -EBUSY;
 	}
 

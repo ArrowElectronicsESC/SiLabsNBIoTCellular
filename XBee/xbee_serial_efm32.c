@@ -37,7 +37,7 @@
 #include <errno.h>
 
 #define BUFFER_UPPER_BOUND	4  // how much space before rts is de-asserted
-#define	BUFFER_LOWER_BOUND	RX_BUFF_SIZE/3  // how much before it's re-asserted
+#define	BUFFER_LOWER_BOUND	RX_BUFF_SIZE/3  // how much before it's re-asserted (/3)
 
 
 /* DO NOT CHANGE THINGS BELOW (they change based off of USART_NUMBER) */
@@ -59,7 +59,6 @@
 #define CONCAT(A, B)		CONCAT_(A, B)
 #define CONCAT3_(A, B, C)	A ## B ## C
 #define CONCAT3(A, B, C)	CONCAT3_(A, B, C)
-
 /* Local Prototypes */
 void checkRxBufferUpper(void);
 void checkRxBufferLower(void);
