@@ -37,8 +37,9 @@
 #include <errno.h>
 
 #define BUFFER_UPPER_BOUND	4  // how much space before rts is de-asserted
-#define	BUFFER_LOWER_BOUND	RX_BUFF_SIZE/3  // how much before it's re-asserted (/3)
-
+#define	BUFFER_LOWER_BOUND	RXBUFFNEWSIZE/3  // how much before it's re-asserted (/3)
+#define TXBUFFNEWSIZE  		511
+#define RXBUFFNEWSIZE		511
 
 /* DO NOT CHANGE THINGS BELOW (they change based off of USART_NUMBER) */
 #define XBEE_RX_IRQn		CONCAT3(USART, USART_NUMBER, _RX_IRQn)			/* IRQRX number */
@@ -68,8 +69,8 @@ void serialInit(xbee_serial_t *serial);
 USART_TypeDef *usart = XBEE_USART;
 static xbee_cbuf_t *rx_buffer;
 static xbee_cbuf_t *tx_buffer;
-static uint8_t internal_rx_buffer[RX_BUFF_SIZE + XBEE_CBUF_OVERHEAD];
-static uint8_t internal_tx_buffer[TX_BUFF_SIZE + XBEE_CBUF_OVERHEAD];
+static uint8_t internal_rx_buffer[RXBUFFNEWSIZE + XBEE_CBUF_OVERHEAD];
+static uint8_t internal_tx_buffer[TXBUFFNEWSIZE + XBEE_CBUF_OVERHEAD];
 
 static bool_t		flow_control_enabled = TRUE;	/* is FC enabled?   */
 static bool_t		tx_break = FALSE;					/* are we breaking  */
@@ -160,10 +161,10 @@ void serialInit(xbee_serial_t *serial)
 #endif // Don't allow context switching until after initialization
 	
 	rx_buffer = (xbee_cbuf_t *) internal_rx_buffer;
-	xbee_cbuf_init(rx_buffer, RX_BUFF_SIZE);
+	xbee_cbuf_init(rx_buffer, RXBUFFNEWSIZE);
 
 	tx_buffer = (xbee_cbuf_t *) internal_tx_buffer;
-	xbee_cbuf_init(tx_buffer, TX_BUFF_SIZE);
+	xbee_cbuf_init(tx_buffer, TXBUFFNEWSIZE);
 
 	/* Enable peripheral clocks */
 	CMU_ClockDivSet(cmuClock_HF, cmuClkDiv_1);
@@ -238,8 +239,8 @@ int xbee_ser_write(xbee_serial_t *serial, const void FAR *buffer, int length)
 		return -EIO;
 	}
 	
-	if (length > TX_BUFF_SIZE) {
-		length = TX_BUFF_SIZE;
+	if (length > TXBUFFNEWSIZE) {
+		length = TXBUFFNEWSIZE;
 	}
 	ret = xbee_cbuf_put(tx_buffer, buffer, length);
 	USART_IntEnable(XBEE_USART, UART_IF_TXBL);
@@ -257,8 +258,8 @@ int xbee_ser_read(xbee_serial_t *serial, void FAR *buffer, int bufsize)
 		return -EIO;
 	}
 	
-	if (bufsize > RX_BUFF_SIZE) {
-		bufsize = RX_BUFF_SIZE;
+	if (bufsize > RXBUFFNEWSIZE) {
+		bufsize = RXBUFFNEWSIZE;
 	}
 	ret = xbee_cbuf_get(rx_buffer, buffer, bufsize);
 	if (flow_control_enabled) {

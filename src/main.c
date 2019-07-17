@@ -742,11 +742,11 @@ static void cellTXTask(void *p_arg) {
 		uartSend(message);
 #endif
 		setLed1(16000, 0, 0); //Set red for sending
-//		int var = sendDataToCloud(local_in_cpy, (const char *) NULL,
-//				(const char *) requestType, (char *) NULL, -1);
-		char testsend[] = "A";
-		int var = sendDataToCloud(testsend, (const char *) NULL,
+		int var = sendDataToCloud(local_in_cpy, (const char *) NULL,
 				(const char *) requestType, (char *) NULL, -1);
+//		char testsend[] = "A";
+//		int var = sendDataToCloud(testsend, (const char *) NULL,
+//				(const char *) requestType, (char *) NULL, -1);
 		sprintf(message, "Sent full packet. Error code is %d\r\n\r\n", var);
 		uartSend(message);
 		setLed1(0, 16000, 0); //Set green for sent This is usually to quick to see

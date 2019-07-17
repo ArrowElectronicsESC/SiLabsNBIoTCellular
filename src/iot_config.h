@@ -13,7 +13,7 @@
 	#define	HTTP_PORT 443 //Must use this port and SSP for Azure
 #endif
 //Expires 1/1/2020
-#define SASTOKEN "SharedAccessSignature sr=ArtisanTemperatureDemo.azure-devices.net%2Fdevices%2Fgecko2&sig=8vKMzjYbDIdBlnIGRrM3o6%2B9FxA0XWFL0jrXnwaIQGE%3D&se=1563815703"
+#define SASTOKEN "SharedAccessSignature sr=ArtisanTemperatureDemo.azure-devices.net%2Fdevices%2Fgecko2&sig=PY1WNzk6Rglg9B6a7d5Em3naxP%2F5cTvL5b94%2B2oC61o%3D&se=1592144534"
 
 //Device name in IOT HUB
 #define DEVICECLIENT "gecko2"
