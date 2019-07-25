@@ -357,7 +357,6 @@
 							<builder buildPath="${workspace_loc:/SLSTK3701A_lte_xbee_EBC}/GNU ARM v7.2.1 - Default" id="com.silabs.ide.si32.gcc.cdt.managedbuild.target.gnu.builder.base.2109625054" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Si32 GNU ARM Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.base.845600448" name="GNU ARM C Compiler" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.base">
 								<option id="gnu.c.compiler.option.include.paths.1352394890" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/external_copied_files}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/util/third_party/segger/systemview/SEGGER&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/app/mcu_example/SLSTK3701A_EFM32GG11/lte_xbee_device_cloud&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/util/third_party/segger/systemview/Config&quot;"/>
@@ -400,7 +399,6 @@
 							<tool id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.base.1605979436" name="GNU ARM C++ Compiler" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.base"/>
 							<tool id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.assembler.base.1471947056" name="GNU ARM Assembler" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.assembler.base">
 								<option id="gnu.both.asm.option.include.paths.1925372392" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/external_copied_files}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/util/third_party/segger/systemview/SEGGER&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/app/mcu_example/SLSTK3701A_EFM32GG11/lte_xbee_device_cloud&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/util/third_party/segger/systemview/Config&quot;"/>

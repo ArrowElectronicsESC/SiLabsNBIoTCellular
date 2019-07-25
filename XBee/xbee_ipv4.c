@@ -30,8 +30,8 @@
 #include "xbee/platform.h"
 #include "xbee/byteorder.h"
 #include "xbee/ipv4.h"
+#include "../src/uart.h"
 
-extern bool FRAME0;
 
 int xbee_ipv4_ntoa(char buffer[16], uint32_t ip_be)
 {
@@ -112,7 +112,7 @@ int xbee_ipv4_envelope_send(const xbee_ipv4_envelope_t FAR *envelope)
 	xbee_dev_t *xbee;
 	xbee_header_transmit_ipv4_t header;
 	int retval;
-	char message[100];
+//	char message[100];
 
 	if (envelope == NULL || envelope->xbee == NULL) {
 		return -EINVAL;
@@ -150,10 +150,8 @@ int xbee_ipv4_envelope_send(const xbee_ipv4_envelope_t FAR *envelope)
 	//original
 	retval = xbee_frame_write( xbee, &header, sizeof(header),
 				envelope->payload, envelope->length, 0);
-	sprintf(message, "retval xbeeframewrite() for data message is: %d\r\n\r\n", retval);
-	uartSend(message);
-
-
+//	sprintf(message, "retval xbeeframewrite() for data message is: %d\r\n\r\n", retval);		// for debugging
+//	uartSend(message);
 	#ifdef XBEE_IPV4_VERBOSE
 		printf( "%s: %s returned %d\n", __FUNCTION__, "xbee_frame_write", retval);
 	#endif

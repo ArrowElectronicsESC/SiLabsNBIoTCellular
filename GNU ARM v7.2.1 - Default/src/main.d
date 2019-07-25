@@ -133,6 +133,7 @@ src/main.o: ../src/main.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\ipv4.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\atcmd.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\byteorder.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\atmode.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\app\mcu_example\slstk3701a_efm32gg11\lte_xbee_device_cloud\http_client.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\tx_status.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\delivery_status.h \
@@ -413,6 +414,8 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\thir
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\atcmd.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\byteorder.h:
+
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\atmode.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\app\mcu_example\slstk3701a_efm32gg11\lte_xbee_device_cloud\http_client.h:
 

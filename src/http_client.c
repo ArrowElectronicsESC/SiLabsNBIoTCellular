@@ -50,7 +50,6 @@ static int txStat = 0xFF;
 
 static int credLen = HTTP_AUTHENTICATION_SIZE;
 static char credentials[HTTP_AUTHENTICATION_SIZE] = { 0 };
-extern bool FRAME0;
 
 /* Contains necessary data for state machines */
 static struct HttpReceiveContext
@@ -510,7 +509,7 @@ int httpClientSend(xbee_ipv4_envelope_t *env,
     temp = env->xbee->frame_id;
     sendContext.frame_id = xbee_next_frame_id(env->xbee);
     env->xbee->frame_id = temp;
-    char msg[50];
+    //char msg[50];
     ret = xbee_ipv4_envelope_send(env);
     while (sendContext.state != HTTP_SEND_DONE)			//andy gets stuck here
     {
@@ -928,7 +927,7 @@ int sendDataToCloud(char *data,
     HttpDataOut_t sendData;
     HttpDataIn_t recvData;
     int ret;
-
+    char PATHNAME[100];
     ret = snprintf(sendBuff, HTTP_BUFFER_LEN,
     			   "{\"deviceClient\": \"%s\","
                    "\"Message\": \"%s\"}",
@@ -941,7 +940,8 @@ int sendDataToCloud(char *data,
     recvData.bufLength = HTTP_BUFFER_LEN;
     recvData.contentLength = 0;
 
-    ret = httpClientConnect(&env, POST, HOSTNAME, "/devices/gecko2/messages/events?api-version=2018-06-30", &sendData, &recvData, timeout);
+    sprintf(PATHNAME, "/devices/%s/messages/events?api-version=2018-06-30", DEVICECLIENT);
+    ret = httpClientConnect(&env, POST, HOSTNAME, PATHNAME, &sendData, &recvData, timeout);
     if (ret < 0)
     {
         return ret;

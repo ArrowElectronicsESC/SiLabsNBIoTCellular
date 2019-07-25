@@ -13,6 +13,8 @@
 
 #include "xbee_config.h"
 #include "xbee/atmode.h"
+#include "../src/uart.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -33,13 +35,15 @@
 #define TARGET_APN XBEE_TARGET_APN
 #endif
 
+
+
 /***************************************************************************//**
  * @brief Reads the serial buffer, looking for an OK (called after issuing AT)
  * @param xbee  the object to read from
  * @param buff  A small buffer of size RESPONSE_BUFF_SIZE to put response
  * @return the amount of bytes read, this should always be sizeof("OK\r")
  ******************************************************************************/
-static int getResponse(xbee_dev_t *xbee, char *buff, int buffSize)
+int getResponse(xbee_dev_t *xbee, char *buff, int buffSize)
 {
   int ret;
   int bytesRead;
@@ -85,7 +89,7 @@ int getOKResponse(xbee_dev_t *xbee, char *buff, int buffSize)
  * @note  This clears any pending data, make sure all XBee data has been handled
  * before calling this function
  ******************************************************************************/
-static int enterCommandMode(xbee_dev_t *xbee, char *buff)
+int enterCommandMode(xbee_dev_t *xbee, char *buff)
 {
   uint32_t startTime;
   int ret;
@@ -137,7 +141,7 @@ static int enterCommandMode(xbee_dev_t *xbee, char *buff)
  * @note  This clears any pending data, make sure all XBee data has been handled
  * before calling this function
  ******************************************************************************/
-static int exitCommandMode(xbee_dev_t *xbee, char *buff)
+int exitCommandMode(xbee_dev_t *xbee, char *buff)
 {
   uint32_t startTime;
   int ret;
@@ -161,6 +165,186 @@ ERR_EXIT:
 
   return ret;
 }
+/***************************************************************************//**
+ * @brief prints rssi and network connected to
+ * @param xbee  the object to read from
+ * @return 0 if successful -1 if unsuccessful
+ ******************************************************************************/
+int printConnectionStatus(xbee_dev_t *xbee)
+{
+	int ret;
+	char buff[RESPONSE_BUFF_SIZE];
+	char message[100];
+	RTOS_ERR err;
+	/* Make sure we are operating on a valid xbee */
+	if (xbee == NULL) {
+		return -EINVAL;
+	}
+	/* Make sure we are operating on a valid serial port */
+	if (xbee_ser_invalid(&xbee->serport)) {
+		return -EINVAL;
+	}
+
+	ret = enterCommandMode(xbee, buff);
+	if ( ret < 0)
+	{
+		exitCommandMode(xbee, buff);
+		/* Switch to the original baud rate */
+		xbee_ser_baudrate(&xbee->serport, 115200);
+		return -1;
+	}
+
+
+	/*print cellular network*/
+	ret = xbee_atmode_send_request(xbee, "CP");
+	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+	if ( ret < 0)
+	{
+		uartSend("Error Sending to XBee\r\n\r\n");
+		exitCommandMode(xbee, buff);
+		/* Switch to the original baud rate */
+		xbee_ser_baudrate(&xbee->serport, 115200);
+		return -1;
+	}
+	if(!strcmp(buff, "0"))
+	{
+#ifdef LCDLOG
+		printf("Carrier Profile: Set to autodetect\r\n\r\n");
+#else
+		uartSend("Carrier Profile: Set to autodetect\r\n\r\n");
+#endif
+	}
+	else if(!strcmp(buff, "1"))
+	{
+#ifdef LCDLOG
+		printf("Carrier Profile: No Profile\r\n\r\n");
+#else
+		uartSend("Carrier Profile: No Profile\r\n\r\n");
+#endif
+	}
+
+	else if(!strcmp(buff, "2"))
+	{
+#ifdef LCDLOG
+		printf("Connecting to ATT\r\n\r\n");
+#else
+		uartSend("Connecting to ATT\r\n\r\n");
+#endif
+	}
+	else if(!strcmp(buff, "3"))
+	{
+#ifdef LCDLOG
+		printf("Connecting to Verizon\r\n\r\n");
+#else
+		uartSend("Connecting to Verizon\r\n\r\n");
+#endif
+	}
+
+//	/* enable RSSI pwm output */
+//	ret = xbee_atmode_send_request(xbee, "P01");
+//	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+//	sprintf(message, "Setting PWM RSSI pin success: %s\r\n\r\n", buff);
+//	uartSend(message);
+//	if ( ret < 0)
+//	{
+//		uartSend("Error Sending to XBee\r\n\r\n");
+//		exitCommandMode(xbee, buff);
+//		/* Switch to the original baud rate */
+//		xbee_ser_baudrate(&xbee->serport, 115200);
+//		return -1;
+//	}
+//	RTOS_ERR err;
+//	/* receive signal strength*/
+//	OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+//	ret = xbee_atmode_send_request(xbee, "DB");
+//	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+//	sprintf(message, "Receive Signal Strength: %s\r\n\r\n", buff);
+//	uartSend(message);
+//	if ( ret < 0)
+//	{
+//		uartSend("Error Sending to XBee\r\n\r\n");
+//		exitCommandMode(xbee, buff);
+//		/* Switch to the original baud rate */
+//		xbee_ser_baudrate(&xbee->serport, 115200);
+//		return -1;
+//	}
+//
+//
+	/* enable all nbiot bands */
+	OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+	ret = xbee_atmode_send_request(xbee, "BN0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+	sprintf(message, "Setting bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
+	uartSend(message);
+	if ( ret < 0)
+	{
+		uartSend("Error Sending to XBee\r\n\r\n");
+		exitCommandMode(xbee, buff);
+		/* Switch to the original baud rate */
+		xbee_ser_baudrate(&xbee->serport, 115200);
+		return -1;
+	}
+
+	/* check nbiot bands */
+		OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+		ret = xbee_atmode_send_request(xbee, "BN");
+		ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+		sprintf(message, "Checking bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
+		uartSend(message);
+		if ( ret < 0)
+		{
+			uartSend("Error Sending to XBee\r\n\r\n");
+			exitCommandMode(xbee, buff);
+			/* Switch to the original baud rate */
+			xbee_ser_baudrate(&xbee->serport, 115200);
+			return -1;
+		}
+
+	/* Read network technology */										// may not work with current radio
+	ret = xbee_atmode_send_request(xbee, "N#");
+	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+	sprintf(message, "Network technology configured to: %s\r\n\r\n", buff);
+	uartSend(message);
+	if ( ret < 0)
+	{
+		uartSend("Error Sending to XBee\r\n\r\n");
+		exitCommandMode(xbee, buff);
+		/* Switch to the original baud rate */
+		xbee_ser_baudrate(&xbee->serport, 115200);
+		return -1;
+	}
+
+	/* change to NB-IoT */
+	ret = xbee_atmode_send_request(xbee, "N#3");
+	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+	sprintf(message, "Change to NBIOT: %s\r\n\r\n", buff);
+	uartSend(message);
+	if ( ret < 0)
+	{
+		uartSend("Error Sending to XBee\r\n\r\n");
+		exitCommandMode(xbee, buff);
+		/* Switch to the original baud rate */
+		xbee_ser_baudrate(&xbee->serport, 115200);
+		return -1;
+	}
+
+/* Write settings to non-volatile memory */
+	xbee_atmode_send_request(xbee, "WR");
+	ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+	sprintf(message, "Writing settings to memory: %s\r\n\r\n", buff);
+	uartSend(message);
+	if (ret < 0)
+	{
+		uartSend("Error writing to xbee memory\r\n\r\n");
+		exitCommandMode(xbee, buff);
+		/* Switch to the original baud rate */
+		xbee_ser_baudrate(&xbee->serport, 115200);
+		return -1;
+	}
+
+	return 0;
+}
+
 
 /***************************************************************************//**
  * @brief Reads the APN and compares to the correct APN
@@ -173,7 +357,7 @@ int configureAPN(xbee_dev_t *xbee)
   char buff[RESPONSE_BUFF_SIZE];
   int ret;
   uint32_t startBaud;
-
+  char message[100];
   /* Make sure we are operating on a valid xbee */
   if (xbee == NULL) {
     return -EINVAL;
@@ -198,55 +382,49 @@ int configureAPN(xbee_dev_t *xbee)
   if ( ret < 0) {
     goto ERR_EXIT;
   }
-  char message[100];
   sprintf(message, "Existing APN set as %s\r\n\r\n", buff);
   uartSend(message);
 
   /* Check if the APN is what we expect, if it isn't try to set it */
-  if (strcmp(buff, "arrowiotdemo.com.attz")) { //ECB This is also broken - could not resolve hologram
-
+  if (strcmp(buff, "arrowiotdemo.com.attz"))
+  {
     /* try to set the APN */
     xbee_atmode_send_request(xbee, "AN""arrowiotdemo.com.attz");
     ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
     if (ret < 0) {
       goto ERR_EXIT;
     }
-    strcpy(message, "New APN set as arrowiotdemo.com.attz");
+    strcpy(message, "New APN set as arrowiotdemo.com.attz\r\n\r\n");
     uartSend(message);
-
-//   xbee_atmode_send_request(xbee, "CN");	// exit command mode
-//   ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-//   if (ret < 0) {
-//	 goto ERR_EXIT;
-//   }
-//    xbee_atmode_send_request(xbee, "AC");	// apply changes and write
-//    ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-//    if (ret < 0) {
-//    goto ERR_EXIT;
-//	}
 
     /* Write settings to non-volatile memory */
     xbee_atmode_send_request(xbee, "WR");
     ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-    if (ret < 0) {
-      goto ERR_EXIT;
+    if (ret < 0)
+    {
+    	uartSend("Error writing to xbee memory\r\n\r\n");
+    	goto ERR_EXIT;
     }
-    char message[100];
-    sprintf(message, "APN set as %s\r\n\r\n", buff);
-    uartSend(message);
     ret = 0;
   }
+
   else {
     /* The APN was already set properly */
     ret = 1;
   }
-
-
+  /* print RSSI and carrier profile and nbiot */
+  ret = printConnectionStatus(xbee);
+  if (ret < 0)
+  {
+	uartSend("Error printing RSSI and Carrier Profile\r\n\r\n");
+	goto ERR_EXIT;
+  }
+  ret = 0;
 ERR_EXIT:
   exitCommandMode(xbee, buff);
   /* Switch to the original baud rate */
   xbee_ser_baudrate(&xbee->serport, startBaud);
-  
+
   return ret;
 
 }
@@ -362,3 +540,4 @@ ERR_EXIT:
   
   return ret;
 }
+
