@@ -1,4 +1,4 @@
-XBee/xbee_config.o: ../XBee/xbee_config.c \
+XBee/xbee_config.o: ../XBee/xbee_config.c ../XBee/../src/iot_config.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\config\inc\xbee_config.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\device.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\platform.h \
@@ -114,6 +114,8 @@ XBee/xbee_config.o: ../XBee/xbee_config.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\wpan\aps.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\atmode.h \
  ../XBee/../src/uart.h
+
+../XBee/../src/iot_config.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\config\inc\xbee_config.h:
 

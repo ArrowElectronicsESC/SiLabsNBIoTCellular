@@ -26,6 +26,7 @@
  * certificate validation.Production code should implement certificate validation.
  ******************************************************************************/
 
+
 // fix xbee_config.c: test hologram first
 // check that APN is set correctly
 #include <stdio.h>
@@ -34,14 +35,18 @@
 #include "em_cmu.h"
 #include "em_chip.h"
 #include "em_emu.h"
+#include "iot_config.h"
 
 #ifndef LCDLOG
 #include "uart.h"	// include for serial terminal printing
+#include <retargetserial.h> // retarget uart to com port
 #endif
 
+#ifdef LCDLOG
 #include "display.h"
 #include "textdisplay.h"
 #include "retargettextdisplay.h"
+#endif
 
 #include "xbee/platform.h"
 #include "xbee/device.h"
@@ -70,9 +75,7 @@
 #include  <common/include/rtos_utils.h>
 #include  <common/include/toolchains.h>
 
-#include "iot_config.h"
 
-//#include <retargetserial.h> // retarget serial
 /*
  *********************************************************************************************************
  *********************************************************************************************************
@@ -102,7 +105,6 @@
 #define BUTTON0_PIN							8u
 #define BUTTON1_PIN 						9u
 #define RESPONSE_BUFF_SIZE 108
-//#define LCDLOG									// establishes LCD or Terminal logging
 
 /*
  *********************************************************************************************************
@@ -190,6 +192,7 @@ int main(void) {
 	/*   Check error code.                                  */
 	APP_RTOS_ASSERT_DBG((RTOS_ERR_CODE_GET(err) == RTOS_ERR_NONE), 1);
 
+	#ifdef LCDLOG
 	/* Initialize the display module. */
 	DISPLAY_Init();
 	/* Retarget stdio to a text display. */
@@ -197,6 +200,8 @@ int main(void) {
 		while (1)
 			;
 	}
+	#endif
+
 	/* Setup LED1 */
 	setupRgbLed1();
 	/* Setup temperature and RH sensor */
@@ -205,12 +210,8 @@ int main(void) {
 	/* setup uart if printing to terminal*/
 #ifndef LCDLOG
 	uartInit();
+	RETARGET_SerialInit();
 #endif
-	// attempt to use retarget serial to change printf() functionality - didnt work at all haha
-//#ifdef TERMINALDEBUG
-//	RETARGET_SerialInit();
-//	GPIO_PinModeSet(gpioPortE, 1, gpioModePushPull, 1);		// virtual COM port enable
-//#endif
 
 	//binary variable to determine whose turn to access data
 	OSMutexCreate(&CellTXBuffMutex, "CELL Tx Buff/Cnt MTX", &err);
@@ -314,10 +315,7 @@ static int initXBee(void) {
 		printf("\fCould not open communication with XBee\n");
 		return -EIO;
 #else
-		char message[] = "Could not open communication with XBee\r\n";
-		for(int i = 0; i < sizeof(message) / sizeof(char); i++){
-			USART_Tx(USART4, message[i]);
-		}
+		printf("Could not open communication with XBee\n");
 		return -EIO;
 #endif
 	}
@@ -334,17 +332,14 @@ static int initXBee(void) {
 			return retval;
 		}
 #else
-		char message[100] = "\fConfigure XBee\r\n\r\n";		// waste of memory i know, ill come back
-		uartSend(message);
+		printf("Configure XBee\r\n\r\n");
 		int retval = configureXbeeForHologramSim();
 		if (retval) {
-		strcpy(message, "Failed to config XBee "
-				"for Hologram SIM. "
-				"Check that the XBee "
-				"is powered and is "
-				"connected properly\r\n");
-		uartSend(message);
-		return retval;
+			printf("Failed to config XBee, "
+					"Check that the XBee"
+					"is powered and is "
+					"connected properly");
+			return retval;
 		}
 #endif
 #endif
@@ -353,18 +348,16 @@ static int initXBee(void) {
 #ifdef LCDLOG
 	printf("\fInitializing\n");
 #else
-	strcpy(message, "Initializing\r\n");
-	uartSend(message);
+	printf("Initializing\r\n");
 #endif
 	initCommandLayer();
 
 	/* Check for successful communication with the XBee */
 	if (myXbee.hardware_version == 0) {
 #ifdef LCDLOG
-		printf("\fFailed to initialize\nattempting to\nreconfigure the XBee\n");
+		printf("\fFailed to initialize\nattempting to\nreconfigure the XBee\r\n\r\n");
 #else
-		strcpy(message, "Failed to initialize, attempting to reconfigure the XBee\r\n");
-		uartSend(message);
+		printf("Failed to initialize, attempting to reconfigure the XBee\r\n\r\n");
 #endif
 
 #if defined(XBEE_DEMO_CONFIG) && !defined(XBEE_DEMO_HOLOGRAM_SIM)
@@ -379,22 +372,20 @@ static int initXBee(void) {
 					"is powered and is\n"
 					"connected properly");
 #else
-			strcpy(message, "Failed to config "
-					"check that the XBee "
-					"is powered and is "
-					"connected properly\r\n")
-			uartSend(message);
-			return -EIO;
+			printf("Failed to config, "
+								"check that the XBee "
+								"is powered and is "
+								"connected properly\r\n\r\n");
 #endif
+			return -EIO;
 		}
 		/* Reinitialize with correct settings */
 		myXbee.flags &= ~XBEE_DEV_FLAG_CMD_INIT;
 		myXbee.flags &= ~XBEE_DEV_FLAG_QUERY_BEGIN;
 #ifdef LCDLOG
-		printf("\fInitializing");
+		printf("\fInitializing\r\n\r\n");
 #else
-		strcpy(message, "Initializing\r\n");
-		uartSend(message);
+		printf("Initializing\r\n\r\n");
 #endif
 		initCommandLayer();
 #else
@@ -402,8 +393,7 @@ static int initXBee(void) {
 #ifdef LCDLOG
 		printf("\nCould not reconfig,\ninclude config code");
 #else
-		strcpy(message, "Could not reconfig, include config code\r\n");
-		uartSend(message);
+		printf("Could not reconfig,include config code\r\n\r\n");
 #endif
 		return -EIO;
 #endif
@@ -415,30 +405,26 @@ static int initXBee(void) {
 #ifdef LCDLOG
 	printf("\fAttempting to apply\nthe new APN\n");
 #else
-	strcpy(message, "Attempting to apply the new APN\r\n");
-	uartSend(message);
+	printf("Attempting to apply the new APN\r\n\r\n");
 #endif
 	int ret = configureAPN(&myXbee);
 	if (ret < 0) {
 #ifdef LCDLOG
 		printf("\fFailed to apply\nthe new APN\n");
 #else
-		strcpy(message, "Failed to apply the new APN \r\n\r\n");
-		uartSend(message);
+		printf("Failed to apply\nthe new APN\r\n\r\n");
 #endif
 	} else if (ret == 1) {
 #ifdef LCDLOG
 		printf("The APN was already\nset correctly!\n");
 #else
-		strcpy(message, "The APN was already set correctly!\r\n\r\n");
-		uartSend(message);
+		printf("The APN was already set correctly!\r\n\r\n");
 #endif
 	} else {
 #ifdef LCDLOG
 		printf("The new APN has been\nset correctly!\n");
 #else
-		strcpy(message, "the new APN has been set correctly!\r\n\r\n");
-		uartSend(message);
+		printf("the new APN has been set correctly!\r\n\r\n");
 #endif
 	}
 #endif
@@ -639,18 +625,11 @@ static void initCommandLayer(void) {
 	/* Wait for XBee to respond */
 	while (!isCmdQueryFinished(&myXbee)) {
 		xbee_dev_tick(&myXbee);
-#ifdef LCDLOG
 		printf(".");
-#else
-		char message[100] = ".";
-		uartSend(message);
-#endif
 		OSTimeDly(100, OS_OPT_TIME_DLY, &err);
 		APP_RTOS_ASSERT_DBG((RTOS_ERR_CODE_GET(err) == RTOS_ERR_NONE), ;);
 	}
-#ifndef LCDLOG
-	uartSend("\r\n\r\n");
-#endif
+	printf("\r\n\r\n");
 }
 
 /***************************************************************************//**
@@ -704,7 +683,6 @@ static void cellTXTask(void *p_arg) {
 	PP_UNUSED_PARAM(p_arg);
 	HttpRequest_t requestType = POST;
 	uint32_t iterations = 0;
-	char message[100];
 	char local_in_cpy[LOCAL_IN_BUFF_LEN];
 	httpClientInitConnection(&myXbee, FALSE);
 	OSTaskCreate(&localInTaskTCB, /* Create the Local in Task.*/
@@ -732,14 +710,11 @@ static void cellTXTask(void *p_arg) {
 		local_in_buff_count = 0; //This part and the SEM are probably redundant, but we may use this elsewhere
 		OSMutexPost(&CellTXBuffMutex, OS_OPT_POST_NONE, &err);
 		//ECB TODO Format data here?
-		clearScreen(); //Still sloppy, but it makes the readout pretty
-
 #ifdef LCDLOG
+		clearScreen(); //Still sloppy, but it makes the readout pretty
 		printf("\033[H" "\tSending Data: %s       \r\n", local_in_cpy);
 #else
-		strcpy(message, "Sending Data: ");
-		strcat(strcat(message, local_in_cpy), "\r\n");
-		uartSend(message);
+		printf("Sending Data: %s       \r\n", local_in_cpy);
 #endif
 		setLed1(16000, 0, 0); //Set red for sending
 
@@ -755,25 +730,29 @@ static void cellTXTask(void *p_arg) {
 //		}
 		int var = sendDataToCloud(local_in_cpy, (const char *) NULL,
 				(const char *) requestType, (char *) NULL, -1);
-		sprintf(message, "Sent full packet. Error code is %d\r\n\r\n", var);
-		uartSend(message);
+#ifdef LCDLOG
+		clearScreen();
+		printf("\033[H""Sent full packet. Error code is %d\r\n\r\n", var);
+#else
+		printf("Sent full packet. Error code is %d\r\n", var);
+#endif
 		setLed1(0, 16000, 0); //Set green for sent This is usually to quick to see
 		if(!var)
 		{
 #ifdef LCDLOG
 			printf("\033[H" "\n\n\nSend Success\r\n"); //Prints on 4th line
+			OSTimeDly(500, OS_OPT_TIME_DLY, &err);
 #else
-			strcpy(message, "Send Success\r\n\r\n");
-			uartSend(message);
+			printf("Send Success\r\n\r\n");
 #endif
 		}
 		else
 		{
 #ifdef LCDLOG
 			printf("\033[H" "\n\n\nError sending. Please try again\r\n");
+			OSTimeDly(500, OS_OPT_TIME_DLY, &err);
 #else
-			strcpy(message, "Error sending. Please try again.\r\n\r\n");
-			uartSend(message);
+			printf("Error sending. Please try again.\r\n\r\n");
 #endif
 		}
 		local_in_cpy[0] = 0;		// clear buffer
@@ -784,19 +763,16 @@ static void cellTXTask(void *p_arg) {
 			OSMutexPend((OS_MUTEX *) &CellTXBuffMutex, (OS_TICK) 0,
 					(OS_OPT) OS_OPT_PEND_BLOCKING, (CPU_TS*) &ts,
 					(RTOS_ERR*) &err);
-			clearScreen();
+
 #ifdef LCDLOG
+			clearScreen();
 			printf(
 					"\033[H" "DEV MODE:\r\nMAX DATA SENT\r\nSENT %d UPDATES\r\nHALTING ALL TASKS\r\n\r\nPress button 0 to send all packets again. Press button 1 to send one more packet.\r\n\r\n",
 					iterations);
 #else
-			strcpy(message, "DEV MODE:\r\nMAX DATA SENT\r\nSENT ");
-			char numAsc[2];
-			itoa(iterations, numAsc, 10);
-			strcat(strcat(message, numAsc), " UPDATES\r\nHALTING ALL TASKS\r\n\r\n");
-			uartSend(message);
-			strcpy(message, "Press button 0 to send all packets again. Press button 1 to send one more packet.\r\n\r\n");
-			uartSend(message);
+			printf(
+					"DEV MODE: MAX DATA SENT\r\nSENT %d UPDATES, HALTING ALL TASKS\r\n\r\nPress button 0 to send all packets again. Press button 1 to send one more packet.\r\n\r\n",
+					iterations);
 #endif
 			while (1) {
 				if(!GPIO_PinInGet(BUTTON_PORT, BUTTON0_PIN)){  // pb0 send all again
@@ -832,14 +808,13 @@ static void printDeviceDescription(void) {
 			(WPAN_DEV_IS_JOINED(&(myXbee.wpan_dev))));
 #else
 	char message[100];
-	sprintf(message, "\fHardware Version: %x\r\n"
+	printf("Hardware Version: %x\r\n"
 				"Firmware Version: %x\r\n"
 				"Baud Rate: %u\r\n"
 				"Connection: %d\r\n\r\n", (unsigned int) myXbee.hardware_version,
 				(unsigned int) myXbee.firmware_version,
 				(unsigned int) myXbee.serport.baudrate,
 				(WPAN_DEV_IS_JOINED(&(myXbee.wpan_dev))));
-	uartSend(message);
 #endif
 }
 //********************************************
@@ -850,22 +825,17 @@ static void printDeviceDescription(void) {
 static void mainStartTask(void *p_arg) {
 	RTOS_ERR err;
 	int ret;
-
 	char message[100];
-
 	PP_UNUSED_PARAM(p_arg); /* Prevent compiler warning.                            */
-
 	BSP_TickInit(); /* Initialize Kernel tick source.                       */
 
 	Common_Init(&err); /* Call common module initialization example.           */
 
 #ifdef LCDLOG
-	clearScreen();
 	printf("Starting Application...\r\n\r\n");
 #else
 	clearTerminal();
-	strcpy(message, "Starting Application...\r\n\r\n");
-	uartSend(message);
+	printf("Starting Application...\r\n\r\n");
 #endif
 	/* button initialization */
 	CMU_ClockEnable(cmuClock_GPIO, true);
@@ -901,30 +871,23 @@ static void mainStartTask(void *p_arg) {
 #ifdef LCDLOG
 	printf("\fWait for cell signal\n");
 #else
-	strcpy(message, "Wait for cell signal\r\n");
-	uartSend(message);
+	printf("Wait for cell signal\r\n");
 #endif
 	do {
 		checkConnection(&myXbee);
 		OSTimeDly(500, OS_OPT_TIME_DLY, &err);
-#ifdef LCDLOG
 		printf(".");
-#else
-		strcpy(message, ".");
-		uartSend(message);
-#endif
 	} while (!(myXbee.wpan_dev.flags & WPAN_FLAG_JOINED));		// make sure cell connection formed before moving on
 #ifdef LCDLOG
 	clearScreen();
 #else
-	uartSend("\r\n\r\n");
+	printf("\r\n\r\n");
 #endif
 
 #ifdef LCDLOG
 	printf("\033[H""Initialized. Starting New Tasks\r\n\r\nPress any button to continue\r\n\r\n");
 #else
-	strcpy(message, "Initialized. Starting New Tasks\r\nPress any button to continue\r\n\r\n");
-	uartSend(message);
+	printf("Initialized. Starting New Tasks\r\nPress any button to continue\r\n\r\n");
 #endif
 	while(1)
 	{
@@ -940,24 +903,9 @@ static void mainStartTask(void *p_arg) {
 #ifdef LCDLOG
 	printf("Attempting to send...Please wait\r\n\r\n");
 #else
-	strcpy(message, "Attempting to send... Please wait\r\n\r\n");
-	uartSend(message);
+	printf("Attempting to send... Please wait\r\n\r\n");
 #endif
 	OSTimeDly(500, OS_OPT_TIME_DLY, &err);
-//	Moved this to cellTxTask to prevent input being lost during cellular config
-//  OSTaskCreate(&localInTaskTCB, /* Create the Local in Task.*/
-//             "Local In Task",
-//             localInTask,
-//             DEF_NULL,
-//             LOCAL_IN_TASK_PRIO,
-//             &localInTaskStk[0],
-//             (LOCAL_IN_TASK_STK_SIZE / 10u),
-//             LOCAL_IN_TASK_STK_SIZE,
-//             0u,
-//             0u,
-//             DEF_NULL,
-//             (OS_OPT_TASK_STK_CLR),
-//             &err);
 
 	OSTaskCreate(&cellTXTaskTCB, /* Create the Local in Task.*/
 	"Cell Tx Task", cellTXTask,

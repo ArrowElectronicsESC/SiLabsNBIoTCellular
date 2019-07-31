@@ -10,7 +10,7 @@
  * Software and the additional terms set forth below.
  * 
  ******************************************************************************/
-
+#include "../src/iot_config.h"
 #include "xbee_config.h"
 #include "xbee/atmode.h"
 #include "../src/uart.h"
@@ -197,21 +197,20 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
 	if ( ret < 0)
 	{
-		uartSend("Error Sending to XBee\r\n\r\n");
+		printf("Error Sending to XBee\r\n\r\n");
 		exitCommandMode(xbee, buff);
 		/* Switch to the original baud rate */
 		xbee_ser_baudrate(&xbee->serport, 115200);
 		return -1;
 	}
-	sprintf(message, "Association Indication returns: %s\r\n\r\n", buff);
-	uartSend(message);
+	printf("Association Indication returns: %s\r\n\r\n", buff);
 
 	/*print cellular network*/
 	ret = xbee_atmode_send_request(xbee, "CP");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
 	if ( ret < 0)
 	{
-		uartSend("Error Sending to XBee\r\n\r\n");
+		printf("Error Sending to XBee\r\n\r\n");
 		exitCommandMode(xbee, buff);
 		/* Switch to the original baud rate */
 		xbee_ser_baudrate(&xbee->serport, 115200);
@@ -222,7 +221,7 @@ int printConnectionStatus(xbee_dev_t *xbee)
 #ifdef LCDLOG
 		printf("Carrier Profile: Set to autodetect\r\n\r\n");
 #else
-		uartSend("Carrier Profile: Set to autodetect\r\n\r\n");
+		printf("Carrier Profile: Set to autodetect\r\n\r\n");
 #endif
 	}
 	else if(!strcmp(buff, "1"))
@@ -230,7 +229,7 @@ int printConnectionStatus(xbee_dev_t *xbee)
 #ifdef LCDLOG
 		printf("Carrier Profile: No Profile\r\n\r\n");
 #else
-		uartSend("Carrier Profile: No Profile\r\n\r\n");
+		printf("Carrier Profile: No Profile\r\n\r\n");
 #endif
 	}
 
@@ -239,7 +238,7 @@ int printConnectionStatus(xbee_dev_t *xbee)
 #ifdef LCDLOG
 		printf("Connecting to ATT\r\n\r\n");
 #else
-		uartSend("Connecting to ATT\r\n\r\n");
+		printf("Connecting to ATT\r\n\r\n");
 #endif
 	}
 	else if(!strcmp(buff, "3"))
@@ -247,18 +246,18 @@ int printConnectionStatus(xbee_dev_t *xbee)
 #ifdef LCDLOG
 		printf("Connecting to Verizon\r\n\r\n");
 #else
-		uartSend("Connecting to Verizon\r\n\r\n");
+		printf("Connecting to Verizon\r\n\r\n");
 #endif
 	}
-
+	OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+	clearScreen();
 	/* check RSSI pwm output */
 	ret = xbee_atmode_send_request(xbee, "P0");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-	sprintf(message, "Reading PWM output for RSSI: %s\r\n\r\n", buff);
-	uartSend(message);
+	printf("Reading PWM output for RSSI: %s\r\n\r\n", buff);
 	if ( ret < 0)
 	{
-		uartSend("Error Sending to XBee\r\n\r\n");
+		printf("Error Sending to XBee\r\n\r\n");
 		exitCommandMode(xbee, buff);
 		xbee_ser_baudrate(&xbee->serport, 115200);		/* Switch to the original baud rate */
 		return -1;
@@ -267,39 +266,39 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	{
 		ret = xbee_atmode_send_request(xbee, "P01");
 		ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-		sprintf(message, "Setting PWM RSSI pin success: %s\r\n\r\n", buff);
-		uartSend(message);
+		printf("Setting PWM RSSI pin success: %s\r\n\r\n", buff);
 		if ( ret < 0)
 		{
-			uartSend("Error Sending to XBee\r\n\r\n");
+			printf("Error Sending to XBee\r\n\r\n");
 			exitCommandMode(xbee, buff);
 			/* Switch to the original baud rate */
 			xbee_ser_baudrate(&xbee->serport, 115200);
 			return -1;
 		}
-			/* Write settings to non-volatile memory */
-			xbee_atmode_send_request(xbee, "WR");
-			ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-			sprintf(message, "Writing settings to memory: %s\r\n\r\n", buff);
-			uartSend(message);
-			if (ret < 0)
-			{
-				uartSend("Error writing to xbee memory\r\n\r\n");
-				exitCommandMode(xbee, buff);
-				/* Switch to the original baud rate */
-				xbee_ser_baudrate(&xbee->serport, 115200);
-				return -1;
-			}
+		OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+		clearScreen();
+		/* Write settings to non-volatile memory */
+		xbee_atmode_send_request(xbee, "WR");
+		ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+		printf("Writing settings to memory: %s\r\n\r\n", buff);
+		if (ret < 0)
+		{
+			printf("Error writing to xbee memory\r\n\r\n");
+			exitCommandMode(xbee, buff);
+			/* Switch to the original baud rate */
+			xbee_ser_baudrate(&xbee->serport, 115200);
+			return -1;
+		}
 	}
 	/* receive signal strength*/
 	OSTimeDly(2000, OS_OPT_TIME_DLY, &err);
+	clearScreen();
 	ret = xbee_atmode_send_request(xbee, "DB");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-	sprintf(message, "Receive Signal Strength: %s\r\n\r\n", buff);
-	uartSend(message);
+	printf("Receive Signal Strength: %s\r\n\r\n", buff);
 	if ( ret < 0)
 	{
-		uartSend("Error Sending to XBee\r\n\r\n");
+		printf("Error Sending to XBee\r\n\r\n");
 		exitCommandMode(xbee, buff);
 		/* Switch to the original baud rate */
 		xbee_ser_baudrate(&xbee->serport, 115200);
@@ -310,13 +309,13 @@ int printConnectionStatus(xbee_dev_t *xbee)
 
 	/* check nbiot bands, set if not all bands open*/
 	OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+	clearScreen();
 	ret = xbee_atmode_send_request(xbee, "BN");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-	sprintf(message, "Checking bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
-	uartSend(message);
+	printf("Checking bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
 	if ( ret < 0)
 	{
-		uartSend("Error Sending to XBee\r\n\r\n");
+		printf("Error Sending to XBee\r\n\r\n");
 		exitCommandMode(xbee, buff);
 		/* Switch to the original baud rate */
 		xbee_ser_baudrate(&xbee->serport, 115200);
@@ -326,13 +325,13 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	{
 		/* enable all nbiot bands */
 		OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+		clearScreen();
 		ret = xbee_atmode_send_request(xbee, "BN0x1081A");
 		ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-		sprintf(message, "Setting bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
-		uartSend(message);
+		printf("Setting bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
 		if ( ret < 0)
 		{
-			uartSend("Error Sending to XBee\r\n\r\n");
+			printf("Error Sending to XBee\r\n\r\n");
 			exitCommandMode(xbee, buff);
 			/* Switch to the original baud rate */
 			xbee_ser_baudrate(&xbee->serport, 115200);
@@ -341,26 +340,25 @@ int printConnectionStatus(xbee_dev_t *xbee)
 		/* Write settings to non-volatile memory */
 		xbee_atmode_send_request(xbee, "WR");
 		ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-		sprintf(message, "Writing settings to memory: %s\r\n\r\n", buff);
-		uartSend(message);
+		printf("Writing settings to memory: %s\r\n\r\n", buff);
 		if (ret < 0)
 		{
-			uartSend("Error writing to xbee memory\r\n\r\n");
+			printf("Error writing to xbee memory\r\n\r\n");
 			exitCommandMode(xbee, buff);
 			/* Switch to the original baud rate */
 			xbee_ser_baudrate(&xbee->serport, 115200);
 			return -1;
 		}
 	}
-
+	OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+	clearScreen();
 	/* Read network technology, if not NBIOT, change to nbiot */
 	ret = xbee_atmode_send_request(xbee, "N#");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-	sprintf(message, "Network technology configured to: %s\r\n\r\n", buff);
-	uartSend(message);
+	printf("Network technology configured to: %s\r\n\r\n", buff);
 	if ( ret < 0)
 	{
-		uartSend("Error Sending to XBee\r\n\r\n");
+		printf("Error Sending to XBee\r\n\r\n");
 		exitCommandMode(xbee, buff);
 		/* Switch to the original baud rate */
 		xbee_ser_baudrate(&xbee->serport, 115200);
@@ -371,11 +369,10 @@ int printConnectionStatus(xbee_dev_t *xbee)
 		/* change to NB-IoT */
 		ret = xbee_atmode_send_request(xbee, "N#3");
 		ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-		sprintf(message, "Change to NBIOT: %s\r\n\r\n", buff);
-		uartSend(message);
+		printf("Change to NBIOT: %s\r\n\r\n", buff);
 		if ( ret < 0)
 		{
-			uartSend("Error Sending to XBee\r\n\r\n");
+			printf("Error Sending to XBee\r\n\r\n");
 			exitCommandMode(xbee, buff);
 			/* Switch to the original baud rate */
 			xbee_ser_baudrate(&xbee->serport, 115200);
@@ -385,11 +382,10 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	/* Write settings to non-volatile memory */
 		xbee_atmode_send_request(xbee, "WR");
 		ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
-		sprintf(message, "Writing settings to memory: %s\r\n\r\n", buff);
-		uartSend(message);
+		printf("Writing settings to memory: %s\r\n\r\n", buff);
 		if (ret < 0)
 		{
-			uartSend("Error writing to xbee memory\r\n\r\n");
+			printf("Error writing to xbee memory\r\n\r\n");
 			exitCommandMode(xbee, buff);
 			/* Switch to the original baud rate */
 			xbee_ser_baudrate(&xbee->serport, 115200);
@@ -411,7 +407,8 @@ int configureAPN(xbee_dev_t *xbee)
   char buff[RESPONSE_BUFF_SIZE];
   int ret;
   uint32_t startBaud;
-  char message[100];
+  RTOS_ERR err;
+
   /* Make sure we are operating on a valid xbee */
   if (xbee == NULL) {
     return -EINVAL;
@@ -436,8 +433,7 @@ int configureAPN(xbee_dev_t *xbee)
   if ( ret < 0) {
     goto ERR_EXIT;
   }
-  sprintf(message, "Existing APN set as %s\r\n\r\n", buff);
-  uartSend(message);
+  printf("Existing APN set as %s\r\n\r\n", buff);
 
   /* Check if the APN is what we expect, if it isn't try to set it */
   if (strcmp(buff, "m2m.com.attz"))
@@ -448,15 +444,14 @@ int configureAPN(xbee_dev_t *xbee)
     if (ret < 0) {
       goto ERR_EXIT;
     }
-    strcpy(message, "New APN set as m2m.com.attz\r\n\r\n");
-    uartSend(message);
+    printf("New APN set as m2m.com.attz\r\n\r\n");
 
     /* Write settings to non-volatile memory */
     xbee_atmode_send_request(xbee, "WR");
     ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
     if (ret < 0)
     {
-    	uartSend("Error writing to xbee memory\r\n\r\n");
+    	printf("Error writing to xbee memory\r\n\r\n");
     	goto ERR_EXIT;
     }
     ret = 0;
@@ -467,10 +462,15 @@ int configureAPN(xbee_dev_t *xbee)
     ret = 1;
   }
   /* print RSSI and carrier profile and nbiot */
+#ifdef LCDLOG
+  clearScreen();
+#endif
   ret = printConnectionStatus(xbee);
+  OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+
   if (ret < 0)
   {
-	uartSend("Error printing RSSI and Carrier Profile\r\n\r\n");
+	printf("Error printing RSSI and Carrier Profile\r\n\r\n");
 	goto ERR_EXIT;
   }
   ret = 0;

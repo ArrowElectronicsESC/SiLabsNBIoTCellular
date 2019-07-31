@@ -17,7 +17,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
-
+#include "../src/iot_config.h"
 #include "displayconfigall.h"
 #include "display.h"
 #include "textdisplay.h"
@@ -69,7 +69,7 @@ EMSTATUS RETARGET_TextDisplayInit(void)
 
   return status;
 }
-
+#ifdef LCDLOG
 /**************************************************************************//**
  * @brief Receive a byte
  *    No input method from the text display is possible, thus we always
@@ -99,7 +99,7 @@ int RETARGET_WriteChar(char c)
     return -1;
   }
 }
-
+#endif
 /**************************************************************************//**
  * @brief Write a string of characters to the RETARGET text display device.
  *

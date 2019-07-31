@@ -1,4 +1,5 @@
 Drivers/retargettextdisplay.o: ../Drivers/retargettextdisplay.c \
+ ../Drivers/../src/iot_config.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\displayconfigall.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displaypalconfig.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displayconfig.h \
@@ -86,6 +87,8 @@ Drivers/retargettextdisplay.o: ../Drivers/retargettextdisplay.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\displayconfigall.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\textdisplay.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\retargettextdisplay.h
+
+../Drivers/../src/iot_config.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\displayconfigall.h:
 

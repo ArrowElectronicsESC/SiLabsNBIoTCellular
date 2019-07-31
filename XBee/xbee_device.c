@@ -569,10 +569,9 @@ int xbee_frame_write( xbee_dev_t *xbee, const void FAR *header,
 			printf( "%s: return -EBUSY (cts = %s, free = %d, framesize = %d)\n",
 				__FUNCTION__, cts ? "yes" : "no", free, framesize);
 		#endif
-		printf("BROKEN HERE");
+		printf("BROKEN HERE: ");
 		char message[100];
-		sprintf(message, "Broken - Framesize: %d, Free: %d, Used: %d\r\n\r\n", framesize, free, used);
-		uartSend(message);
+		printf("Framesize: %d, Free: %d, Used: %d\r\n\r\n", framesize, free, used);
 		return (framesize - free > used) ? -EMSGSIZE : -EBUSY;
 	}
 

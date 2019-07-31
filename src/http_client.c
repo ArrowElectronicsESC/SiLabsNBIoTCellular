@@ -455,7 +455,7 @@ uint32_t resolveFQDN(xbee_dev_t *xbee, char *fqdnStr)
     {
         sendAtRequest(xbee, "LA", fqdnStr, resolveFQDNCallback, &ipBe);
     }
-    printf("\033[H" "Resolved: %lx",ipBe);
+
     OSTimeDly(100, OS_OPT_TIME_DLY, &err);
     return ipBe;
 }

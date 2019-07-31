@@ -1,18 +1,9 @@
-//ECB Defines for Azure Cloud
+#define LCDLOG 			// establishes LCD or Terminal logging
 
+#define HOSTNAME "GGDigi1.azure-devices.net" //IOT Hub name is the first part of this address
 
-//#define HTTP_VIEW_SERVER //Used to direct to Eric's private server for testing
+#define	HTTP_PORT 443 //Must use this port and SSP for Azure
 
-#ifdef HTTP_VIEW_SERVER
-	#define HOSTNAME "bepplerfamily.com"
-	#define S_HOSTNAME "https://bepplerfamily.com"
-	#define	HTTP_PORT 80
-#else
-	#define HOSTNAME "GGDigi1.azure-devices.net" //IOT Hub name is the first part of this address
-	//#define S_HOSTNAME "https://GGDigi1.azure-devices.net" //No longer needed (I think...)
-	#define	HTTP_PORT 443 //Must use this port and SSP for Azure
-#endif
-//Expires 1/1/2020
 #define SASTOKEN "SharedAccessSignature sr=GGDigi1.azure-devices.net%2Fdevices%2Fggdevid1&sig=KLsM0xyKL3yHZmKECZ%2FTvXynxFkXjOuTY37xbTg6mHI%3D&se=1592749201"
 
 //Device name in IOT HUB
