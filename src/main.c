@@ -102,7 +102,6 @@
 #define BUTTON0_PIN							8u
 #define BUTTON1_PIN 						9u
 #define RESPONSE_BUFF_SIZE 108
-#define CARRIERPROFILE						XBEE_CONFIG_CARRIER_ATT				// xbee_config.h enum
 //#define LCDLOG									// establishes LCD or Terminal logging
 
 /*
@@ -268,7 +267,6 @@ int configureXbeeForHologramSim(void) {
 		OSTimeDly(1000, OS_OPT_TIME_DLY, &err);
 		xbee_ser_rx_flush(&myXbee.serport);
 
-		/* Disable NB-IoT */
 		xbee_ser_write(&myXbee.serport, "AT+URAT=7\r", 10);
 
 		/* Wait to receive "OK" response */
@@ -292,7 +290,7 @@ int configureXbeeForHologramSim(void) {
 	}
 	/* Place the XBee into API mode */
 	if (configureXBee(&myXbee,
-	XBEE_TARGET_BAUD, XBEE_CONFIG_MODE_API, XBEE_CONFIG_CARRIER_RESERVED,			// api mode, user defined carrier profile, no factory reset
+	XBEE_TARGET_BAUD, XBEE_CONFIG_MODE_API, CARRIERPROFILE,			// api mode, user defined carrier profile, no factory reset (FALSE)
 	FALSE)) {
 		return -EIO;
 	}
@@ -749,11 +747,11 @@ static void cellTXTask(void *p_arg) {
 //		/* print RSSI and carrier profile and nbiot */
 //		if(count++ > 2)
 //		{
-//				  int ret = printConnectionStatus(&myXbee);
-//				  if (ret < 0)
-//				 {
-//					uartSend("Error printing RSSI and Carrier Profile\r\n\r\n");
-//				 }
+//			  int ret = printConnectionStatus(&myXbee);
+//			  if (ret < 0)
+//			 {
+//				uartSend("Error printing RSSI and Carrier Profile\r\n\r\n");
+//			 }
 //		}
 		int var = sendDataToCloud(local_in_cpy, (const char *) NULL,
 				(const char *) requestType, (char *) NULL, -1);
