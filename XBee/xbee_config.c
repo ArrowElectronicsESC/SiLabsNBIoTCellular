@@ -203,8 +203,13 @@ int printConnectionStatus(xbee_dev_t *xbee)
 		xbee_ser_baudrate(&xbee->serport, 115200);
 		return -1;
 	}
+#ifdef LCDLOG
+	clearScreen();
+	printf("\033[H""Association Indication returns: %s\r\n\r\n", buff);
+#else
 	printf("Association Indication returns: %s\r\n\r\n", buff);
-
+#endif
+	OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
 	/*print cellular network*/
 	ret = xbee_atmode_send_request(xbee, "CP");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
@@ -219,7 +224,8 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	if(!strcmp(buff, "0"))
 	{
 #ifdef LCDLOG
-		printf("Carrier Profile: Set to autodetect\r\n\r\n");
+		clearScreen();
+		printf("\033[H""Carrier Profile: Set to autodetect\r\n\r\n");
 #else
 		printf("Carrier Profile: Set to autodetect\r\n\r\n");
 #endif
@@ -227,7 +233,8 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	else if(!strcmp(buff, "1"))
 	{
 #ifdef LCDLOG
-		printf("Carrier Profile: No Profile\r\n\r\n");
+		clearScreen();
+		printf("\033[H""Carrier Profile: No Profile\r\n\r\n");
 #else
 		printf("Carrier Profile: No Profile\r\n\r\n");
 #endif
@@ -236,7 +243,8 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	else if(!strcmp(buff, "2"))
 	{
 #ifdef LCDLOG
-		printf("Connecting to ATT\r\n\r\n");
+		clearScreen();
+		printf("\033[H""Connecting to ATT\r\n\r\n");
 #else
 		printf("Connecting to ATT\r\n\r\n");
 #endif
@@ -244,17 +252,24 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	else if(!strcmp(buff, "3"))
 	{
 #ifdef LCDLOG
-		printf("Connecting to Verizon\r\n\r\n");
+		clearScreen();
+		printf("\033[H""Connecting to Verizon\r\n\r\n");
 #else
 		printf("Connecting to Verizon\r\n\r\n");
 #endif
 	}
 	OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+#ifdef LCDLOG
 	clearScreen();
+#endif
 	/* check RSSI pwm output */
 	ret = xbee_atmode_send_request(xbee, "P0");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+#ifdef LCDLOG
+	printf("\033[H""Reading PWM output for RSSI: %s\r\n\r\n", buff);
+#else
 	printf("Reading PWM output for RSSI: %s\r\n\r\n", buff);
+#endif
 	if ( ret < 0)
 	{
 		printf("Error Sending to XBee\r\n\r\n");
@@ -266,6 +281,7 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	{
 		ret = xbee_atmode_send_request(xbee, "P01");
 		ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+
 		printf("Setting PWM RSSI pin success: %s\r\n\r\n", buff);
 		if ( ret < 0)
 		{
@@ -276,10 +292,11 @@ int printConnectionStatus(xbee_dev_t *xbee)
 			return -1;
 		}
 		OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
-		clearScreen();
+
 		/* Write settings to non-volatile memory */
 		xbee_atmode_send_request(xbee, "WR");
 		ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+
 		printf("Writing settings to memory: %s\r\n\r\n", buff);
 		if (ret < 0)
 		{
@@ -292,10 +309,16 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	}
 	/* receive signal strength*/
 	OSTimeDly(2000, OS_OPT_TIME_DLY, &err);
+#ifdef LCDLOG
 	clearScreen();
+#endif
 	ret = xbee_atmode_send_request(xbee, "DB");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+#ifdef LCDLOG
+	printf("\033[H""Receive Signal Strength: %s\r\n\r\n", buff);
+#else
 	printf("Receive Signal Strength: %s\r\n\r\n", buff);
+#endif
 	if ( ret < 0)
 	{
 		printf("Error Sending to XBee\r\n\r\n");
@@ -309,10 +332,16 @@ int printConnectionStatus(xbee_dev_t *xbee)
 
 	/* check nbiot bands, set if not all bands open*/
 	OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+#ifdef LCDLOG
 	clearScreen();
+#endif
 	ret = xbee_atmode_send_request(xbee, "BN");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+#ifdef LCDLOG
+	printf("\033[H""Checking bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
+#else
 	printf("Checking bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
+#endif
 	if ( ret < 0)
 	{
 		printf("Error Sending to XBee\r\n\r\n");
@@ -325,10 +354,13 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	{
 		/* enable all nbiot bands */
 		OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
-		clearScreen();
 		ret = xbee_atmode_send_request(xbee, "BN0x1081A");
 		ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+#ifdef LCDLOG
 		printf("Setting bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
+#else
+		printf("Setting bandmask enabling all NBIoT bands: %s\r\n\r\n", buff);
+#endif
 		if ( ret < 0)
 		{
 			printf("Error Sending to XBee\r\n\r\n");
@@ -340,7 +372,11 @@ int printConnectionStatus(xbee_dev_t *xbee)
 		/* Write settings to non-volatile memory */
 		xbee_atmode_send_request(xbee, "WR");
 		ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+#ifdef LCDLOG
 		printf("Writing settings to memory: %s\r\n\r\n", buff);
+#else
+	printf("Writing settings to memory: %s\r\n\r\n", buff);
+#endif
 		if (ret < 0)
 		{
 			printf("Error writing to xbee memory\r\n\r\n");
@@ -351,11 +387,17 @@ int printConnectionStatus(xbee_dev_t *xbee)
 		}
 	}
 	OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
+#ifdef LCDLOG
 	clearScreen();
+#endif
 	/* Read network technology, if not NBIOT, change to nbiot */
 	ret = xbee_atmode_send_request(xbee, "N#");
 	ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+#ifdef LCDLOG
+	printf("\033[H""Network technology configured to: %s\r\n\r\n", buff);
+#else
 	printf("Network technology configured to: %s\r\n\r\n", buff);
+#endif
 	if ( ret < 0)
 	{
 		printf("Error Sending to XBee\r\n\r\n");
@@ -366,10 +408,15 @@ int printConnectionStatus(xbee_dev_t *xbee)
 	}
 	if(strcmp(buff, "3"))
 	{
+		OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
 		/* change to NB-IoT */
 		ret = xbee_atmode_send_request(xbee, "N#3");
 		ret = getResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+#ifdef LCDLOG
 		printf("Change to NBIOT: %s\r\n\r\n", buff);
+#else
+		printf("Change to NBIOT: %s\r\n\r\n", buff);
+#endif
 		if ( ret < 0)
 		{
 			printf("Error Sending to XBee\r\n\r\n");
@@ -378,11 +425,15 @@ int printConnectionStatus(xbee_dev_t *xbee)
 			xbee_ser_baudrate(&xbee->serport, 115200);
 			return -1;
 		}
-
+		OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
 	/* Write settings to non-volatile memory */
 		xbee_atmode_send_request(xbee, "WR");
 		ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
+#ifdef LCDLOG
 		printf("Writing settings to memory: %s\r\n\r\n", buff);
+#else
+		printf("Writing settings to memory: %s\r\n\r\n", buff);
+#endif
 		if (ret < 0)
 		{
 			printf("Error writing to xbee memory\r\n\r\n");
@@ -391,6 +442,7 @@ int printConnectionStatus(xbee_dev_t *xbee)
 			xbee_ser_baudrate(&xbee->serport, 115200);
 			return -1;
 		}
+		OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
 	}
 	return 0;
 }
@@ -433,8 +485,11 @@ int configureAPN(xbee_dev_t *xbee)
   if ( ret < 0) {
     goto ERR_EXIT;
   }
+#ifdef LCDLOG
   printf("Existing APN set as %s\r\n\r\n", buff);
-
+#else
+  printf("Existing APN set as %s\r\n\r\n", buff);
+#endif
   /* Check if the APN is what we expect, if it isn't try to set it */
   if (strcmp(buff, "m2m.com.attz"))
   {
@@ -462,9 +517,6 @@ int configureAPN(xbee_dev_t *xbee)
     ret = 1;
   }
   /* print RSSI and carrier profile and nbiot */
-#ifdef LCDLOG
-  clearScreen();
-#endif
   ret = printConnectionStatus(xbee);
   OSTimeDly(3000, OS_OPT_TIME_DLY, &err);
 

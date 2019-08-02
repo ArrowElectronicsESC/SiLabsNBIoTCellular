@@ -49,11 +49,12 @@ void uartInit(){
 }
 
 //****************************************************************************
-// send function that sends contents of array
+// send function sends contents of array
 // inputs: pointer to array to send
 // outputs: none
 //****************************************************************************
 //void uartSend(char * message){
+
 //	uint8_t i = 0;
 //	while(message[i++] != '\0'){
 //		USART_Tx(USART4, message[i - 1]);

@@ -74,23 +74,14 @@ src/main.o: ../src/main.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\emlib\inc\em_chip.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\emlib\inc\em_system.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\emlib\inc\em_emu.h \
- ../src/iot_config.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\display.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\emstatus.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\middleware\glib\em_types.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\displayconfigall.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displaypalconfig.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displayconfig.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\app\mcu_example\slstk3701a_efm32gg11\lte_xbee_device_cloud\displayconfigapp.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displayls013b7dh06config.h \
+ ../src/iot_config.h ../src/uart.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\emlib\inc\em_gpio.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\displayls013b7dh06.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displayls013b7dh06config.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\textdisplayconfig.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displayconfig.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\retargettextdisplayconfig.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\textdisplay.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\retargettextdisplay.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\retargetserial.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\retargetserialconfig.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\bsp\bsp.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\bspconfig.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\bsp\bsp_bcp.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\emlib\inc\em_usart.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\platform.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\platform_efm32.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\micrium_os\cpu\include\cpu.h \
@@ -123,7 +114,6 @@ src/main.o: ../src/main.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\micrium_os\kernel\include\os_port_sel.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\micrium_os\ports\source\gnu\armv7m_os_cpu.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\micrium_os\common\include\rtos_utils.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\emlib\inc\em_usart.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\jslong_glue.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\jslong.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\device.h \
@@ -141,10 +131,7 @@ src/main.o: ../src/main.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\app\mcu_example\slstk3701a_efm32gg11\lte_xbee_device_cloud\leds.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\app\mcu_example\slstk3701a_efm32gg11\lte_xbee_device_cloud\gnss.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\config\inc\xbee_config.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\micrium_os\bsp\siliconlabs\generic\include\bsp_os.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\bsp\bsp.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\bspconfig.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\bsp\bsp_bcp.h
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\micrium_os\bsp\siliconlabs\generic\include\bsp_os.h
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\device\siliconlabs\efm32gg11b\include\em_device.h:
 
@@ -298,37 +285,21 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\
 
 ../src/iot_config.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\display.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\emstatus.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\middleware\glib\em_types.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\displayconfigall.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displaypalconfig.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displayconfig.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\app\mcu_example\slstk3701a_efm32gg11\lte_xbee_device_cloud\displayconfigapp.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displayls013b7dh06config.h:
+../src/uart.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\emlib\inc\em_gpio.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\displayls013b7dh06.h:
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\retargetserial.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displayls013b7dh06config.h:
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\retargetserialconfig.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\textdisplayconfig.h:
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\bsp\bsp.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\displayconfig.h:
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\bspconfig.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\retargettextdisplayconfig.h:
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\bsp\bsp_bcp.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\textdisplay.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\drivers\retargettextdisplay.h:
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\emlib\inc\em_usart.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\platform.h:
 
@@ -394,8 +365,6 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\micrium_os\common\include\rtos_utils.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\emlib\inc\em_usart.h:
-
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\jslong_glue.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\inc\xbee\jslong.h:
@@ -431,9 +400,3 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\app\mcu_e
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\util\third_party\digi_lte\xbee\config\inc\xbee_config.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\platform\micrium_os\bsp\siliconlabs\generic\include\bsp_os.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\bsp\bsp.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\slstk3701a_efm32gg11\config\bspconfig.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.5\hardware\kit\common\bsp\bsp_bcp.h:

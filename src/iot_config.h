@@ -1,4 +1,4 @@
-#define LCDLOG 			// establishes LCD or Terminal logging
+//#define LCDLOG 			// establishes LCD or Terminal logging
 
 #define HOSTNAME "GGDigi1.azure-devices.net" //IOT Hub name is the first part of this address
 
