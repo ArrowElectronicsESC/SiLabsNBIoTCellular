@@ -522,7 +522,7 @@ int httpClientSend(xbee_ipv4_envelope_t *env,
                 ++failures;
                 return ret;
             }
-            int retval = xbee_dev_tick(env->xbee);
+            xbee_dev_tick(env->xbee);
             if (xbee_seconds_timer() >= (uint32_t) timeout && timeout >= 0)
             {
                 sendContext.state = HTTP_SEND_ERROR;
@@ -617,15 +617,14 @@ int httpClientCreateAuth(void)
 int httpClientInitConnection(xbee_dev_t *xbee, bool_t secure)
 {
     int ret;
-
     env.xbee = xbee;
 
     hostName[0] = 0; //Null terminate
     //ret = getCloudFQDN(env.xbee, hostName, MAX_URL_SIZE);
     ret = strcpy(hostName, HOSTNAME); //ECB Host Name Shouldn't be hardcoded
-      if (ret < 0) {
+    if (ret < 0) {
         return ret;
-      }
+    }
 
     env.local_port = 0;
 

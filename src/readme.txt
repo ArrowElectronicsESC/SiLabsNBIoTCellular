@@ -1,20 +1,8 @@
 Digi XBee Device Cloud example.
 
-This example project uses a Digi XBee module to communicate via LTE-M. It
-transmits temperature data to the Digi Device Cloud and allows a Cloud user to
-modify LED's on the board.
+This example project uses a Digi XBee module to communicate via LTE CAT-M1. It
+transmits temperature data to Azure.
 
-In order to use the Digi Device Cloud, the user must create an account on the
-Digi Remote Manager (see www.digi.com/products/cloud/digi-remote-manager).
-Once the user has an account on Digi Remote Manager, he should set the compiler
-symbols USER to his username and PWD to his password, respectively. Next, 
-rebuild the example project. In Studio, these compiler symbols can be set at:
-
-Project Properties->GNU ARM C Compiler->Symbols.
-
-Note: Digi Remote Manager does not currently support controlling board LED's
-remotely. In order to exercise this feature, use the included Python script
-lte_xbee_device_cloud\scripts\rgb_uploader.py.
 
 At startup, the EFM32GG11 will attempt to communicate with the XBee module
 via UART. The application assumes the XBee is configured with a baudrate of
@@ -41,6 +29,18 @@ correctly.
 If XBEE_CHANGE_APN is defined, the application will configure the Access Point 
 Name (APN) setting of the XBee. The default value in "-". In the case of the 
 Hologram SIM card, it is recommended to set the APN to "hologram".
+
+The EFM32 prints logging data either through the on board LCD or prints to the 
+serial terminal. To print to LCD, make sure LCDLOG is defined inside of iot_config.h
+To print to serial terminal, make sure that define is commented out.
+
+To change carrier profile settings, change the define in iot_config.h CARRIERPROFILE 
+to desired network provider (ATT or Verizon).
+
+In order to connect to the cloud, make sure HOSTNAME, SASTOKEN, and DEVICECLIENT are
+configured corectly inside iot_config.h. HOSTNAME comes from Azure IoT hub, SASTOKEN
+should be a signature token generated inside of your device monitor. DEVICECLIENT is 
+the device name inside of your IoT hub.
 
 Board:  Silicon Labs SLSTK3701A Starter Kit attached to BRD8021A Expansion Board
 Device: EFM32GG11B820F2048GL192

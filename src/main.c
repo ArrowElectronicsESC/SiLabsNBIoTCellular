@@ -160,16 +160,23 @@ static int initXBee(void);
 void clearScreen(void);
 void clearTerminal(void);
 
-
+/***************************************************************************//**
+ * @brief Clears LCD
+ * inputs: none
+ * outputs: none
+ ******************************************************************************/
 void clearScreen(void) { //Its sloppy - I know
 	int i;
 	for (i = 0; i < 20; i++) {
-		//for(j = 0; j < 20; j++){
 		printf("                     "); //Print 20 spaces to "Clear" the screen
-		//}
 	}
 }
 
+/***************************************************************************//**
+ * @brief Clears terminal sending escape ASCII
+ * inputs: none
+ * outputs: none
+ ******************************************************************************/
 void clearTerminal()
 {
 	USART_Tx(USART4, 27);
@@ -676,6 +683,8 @@ static void localInTask(void *p_arg) {
 }
 /***************************************************************************//**
  * @brief takes data from the Local in Buffer, formats, and sends as an HTTP Post
+ * inputs: none
+ * outputs: none
  ******************************************************************************/
 static void cellTXTask(void *p_arg) {
 	RTOS_ERR err;
@@ -693,8 +702,6 @@ static void cellTXTask(void *p_arg) {
 	DEF_NULL, (OS_OPT_TASK_STK_CLR ), &err);
 	/* Reset the connection flag to guarantee repolling of connection status */
 	myXbee.wpan_dev.flags &= ~(WPAN_FLAG_JOINED);
-
-	int count = 0;
 
 	while (1) {
 		//setLed1(0, 0, 16000);//Set Blue for idle
@@ -718,16 +725,6 @@ static void cellTXTask(void *p_arg) {
 #endif
 		setLed1(16000, 0, 0); //Set red for sending
 
-
-//		/* print RSSI and carrier profile and nbiot */
-//		if(count++ > 2)
-//		{
-//			  int ret = printConnectionStatus(&myXbee);
-//			  if (ret < 0)
-//			 {
-//				uartSend("Error printing RSSI and Carrier Profile\r\n\r\n");
-//			 }
-//		}
 		int var = sendDataToCloud(local_in_cpy, (const char *) NULL,
 				(const char *) requestType, (char *) NULL, -1);
 #ifdef LCDLOG
@@ -796,6 +793,8 @@ static void cellTXTask(void *p_arg) {
 
 /***************************************************************************//**
  * @brief Prints relevant information about the connected XBee
+ * inputs: none
+ * outputs: none
  ******************************************************************************/
 static void printDeviceDescription(void) {
 #ifdef LCDLOG
@@ -807,7 +806,6 @@ static void printDeviceDescription(void) {
 			(unsigned int) myXbee.serport.baudrate,
 			(WPAN_DEV_IS_JOINED(&(myXbee.wpan_dev))));
 #else
-	char message[100];
 	printf("Hardware Version: %x\r\n"
 				"Firmware Version: %x\r\n"
 				"Baud Rate: %u\r\n"
@@ -817,15 +815,13 @@ static void printDeviceDescription(void) {
 				(WPAN_DEV_IS_JOINED(&(myXbee.wpan_dev))));
 #endif
 }
-//********************************************
-// Main task
+//*******************************************************************************************************************
+// Main task: Performs initialization, prints device description, establishes cell connection and creates next task
 // inputs: none
 // outputs: none
-//********************************************
+//*******************************************************************************************************************
 static void mainStartTask(void *p_arg) {
 	RTOS_ERR err;
-	int ret;
-	char message[100];
 	PP_UNUSED_PARAM(p_arg); /* Prevent compiler warning.                            */
 	BSP_TickInit(); /* Initialize Kernel tick source.                       */
 

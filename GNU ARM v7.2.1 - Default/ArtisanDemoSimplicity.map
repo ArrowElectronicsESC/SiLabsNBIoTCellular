@@ -21109,7 +21109,7 @@ OUTPUT(ArtisanDemoSimplicity.axf elf32-littlearm)
  .comment       0x0000007e       0x7f ./src/temp_sensor.o
  .comment       0x0000007e       0x7f ./src/uart.o
 
-.debug_info     0x00000000    0x7910c
+.debug_info     0x00000000    0x79089
  .debug_info    0x00000000     0x100b ./BSP/bsp_stk_leds.o
  .debug_info    0x0000100b      0x253 ./BSP/siliconlabs/generic/source/bsp_cpu.o
  .debug_info    0x0000125e     0x2308 ./BSP/siliconlabs/generic/source/bsp_os.o
@@ -21126,52 +21126,52 @@ OUTPUT(ArtisanDemoSimplicity.axf elf32-littlearm)
  .debug_info    0x00013353     0x4242 ./XBee/xbee_atcmd.o
  .debug_info    0x00017595     0x29be ./XBee/xbee_atmode.o
  .debug_info    0x00019f53     0x20ef ./XBee/xbee_cbuf.o
- .debug_info    0x0001c042     0x3acb ./XBee/xbee_config.o
- .debug_info    0x0001fb0d     0x311b ./XBee/xbee_device.o
- .debug_info    0x00022c28     0x2cc6 ./XBee/xbee_ipv4.o
- .debug_info    0x000258ee     0x22ca ./XBee/xbee_platform_efm32.o
- .debug_info    0x00027bb8     0x479e ./XBee/xbee_serial_efm32.o
- .debug_info    0x0002c356     0x4d59 ./common/source/clk/clk.o
- .debug_info    0x000310af     0x17d6 ./common/source/collections/slist.o
- .debug_info    0x00032885     0x1b10 ./common/source/common/common.o
- .debug_info    0x00034395     0x3d47 ./common/source/kal/kal_kernel.o
- .debug_info    0x000380dc      0x314 ./common/source/lib/lib_math.o
- .debug_info    0x000383f0     0x3403 ./common/source/lib/lib_mem.o
- .debug_info    0x0003b7f3     0x25ea ./common/source/platform_mgr/platform_mgr.o
- .debug_info    0x0003dddd      0x158 ./common/source/rtos/rtos_err_str.o
- .debug_info    0x0003df35     0x1e7a ./cpu/source/cpu_core.o
- .debug_info    0x0003fdaf       0x7b ./emlib/em_assert.o
- .debug_info    0x0003fe2a     0x5970 ./emlib/em_cmu.o
- .debug_info    0x0004579a      0xf0b ./emlib/em_core.o
- .debug_info    0x000466a5     0x3d29 ./emlib/em_emu.o
- .debug_info    0x0004a3ce     0x1155 ./emlib/em_gpio.o
- .debug_info    0x0004b523     0x10a5 ./emlib/em_i2c.o
- .debug_info    0x0004c5c8      0xb57 ./emlib/em_timer.o
- .debug_info    0x0004d11f     0x148e ./emlib/em_usart.o
- .debug_info    0x0004e5ad     0x15f2 ./kernel/source/os_cfg_app.o
- .debug_info    0x0004fb9f     0x2e6d ./kernel/source/os_core.o
- .debug_info    0x00052a0c     0x18cf ./kernel/source/os_dbg.o
- .debug_info    0x000542db     0x1bfa ./kernel/source/os_msg.o
- .debug_info    0x00055ed5     0x2773 ./kernel/source/os_mutex.o
- .debug_info    0x00058648     0x165b ./kernel/source/os_prio.o
- .debug_info    0x00059ca3     0x226f ./kernel/source/os_sem.o
- .debug_info    0x0005bf12     0x1ee0 ./kernel/source/os_stat.o
- .debug_info    0x0005ddf2     0x3463 ./kernel/source/os_task.o
- .debug_info    0x00061255     0x1f5f ./kernel/source/os_tick.o
- .debug_info    0x000631b4     0x1ee2 ./kernel/source/os_time.o
- .debug_info    0x00065096     0x26d3 ./kernel/source/os_tmr.o
- .debug_info    0x00067769     0x1500 ./kernel/source/os_var.o
- .debug_info    0x00068c69       0x26 ./ports/source/gnu/armv7m_cpu_a.o
- .debug_info    0x00068c8f       0x26 ./ports/source/gnu/armv7m_os_cpu_a.o
- .debug_info    0x00068cb5     0x1915 ./ports/source/gnu/armv7m_os_cpu_c.o
- .debug_info    0x0006a5ca     0x3db5 ./src/gnss.o
- .debug_info    0x0006e37f     0x4439 ./src/http_client.o
- .debug_info    0x000727b8      0xc8a ./src/leds.o
- .debug_info    0x00073442     0x4ae2 ./src/main.o
- .debug_info    0x00077f24      0x7ae ./src/temp_sensor.o
- .debug_info    0x000786d2      0xa3a ./src/uart.o
+ .debug_info    0x0001c042     0x3ab0 ./XBee/xbee_config.o
+ .debug_info    0x0001faf2     0x311b ./XBee/xbee_device.o
+ .debug_info    0x00022c0d     0x2cc6 ./XBee/xbee_ipv4.o
+ .debug_info    0x000258d3     0x22ca ./XBee/xbee_platform_efm32.o
+ .debug_info    0x00027b9d     0x479e ./XBee/xbee_serial_efm32.o
+ .debug_info    0x0002c33b     0x4d59 ./common/source/clk/clk.o
+ .debug_info    0x00031094     0x17d6 ./common/source/collections/slist.o
+ .debug_info    0x0003286a     0x1b10 ./common/source/common/common.o
+ .debug_info    0x0003437a     0x3d47 ./common/source/kal/kal_kernel.o
+ .debug_info    0x000380c1      0x314 ./common/source/lib/lib_math.o
+ .debug_info    0x000383d5     0x3403 ./common/source/lib/lib_mem.o
+ .debug_info    0x0003b7d8     0x25ea ./common/source/platform_mgr/platform_mgr.o
+ .debug_info    0x0003ddc2      0x158 ./common/source/rtos/rtos_err_str.o
+ .debug_info    0x0003df1a     0x1e7a ./cpu/source/cpu_core.o
+ .debug_info    0x0003fd94       0x7b ./emlib/em_assert.o
+ .debug_info    0x0003fe0f     0x5970 ./emlib/em_cmu.o
+ .debug_info    0x0004577f      0xf0b ./emlib/em_core.o
+ .debug_info    0x0004668a     0x3d29 ./emlib/em_emu.o
+ .debug_info    0x0004a3b3     0x1155 ./emlib/em_gpio.o
+ .debug_info    0x0004b508     0x10a5 ./emlib/em_i2c.o
+ .debug_info    0x0004c5ad      0xb57 ./emlib/em_timer.o
+ .debug_info    0x0004d104     0x148e ./emlib/em_usart.o
+ .debug_info    0x0004e592     0x15f2 ./kernel/source/os_cfg_app.o
+ .debug_info    0x0004fb84     0x2e6d ./kernel/source/os_core.o
+ .debug_info    0x000529f1     0x18cf ./kernel/source/os_dbg.o
+ .debug_info    0x000542c0     0x1bfa ./kernel/source/os_msg.o
+ .debug_info    0x00055eba     0x2773 ./kernel/source/os_mutex.o
+ .debug_info    0x0005862d     0x165b ./kernel/source/os_prio.o
+ .debug_info    0x00059c88     0x226f ./kernel/source/os_sem.o
+ .debug_info    0x0005bef7     0x1ee0 ./kernel/source/os_stat.o
+ .debug_info    0x0005ddd7     0x3463 ./kernel/source/os_task.o
+ .debug_info    0x0006123a     0x1f5f ./kernel/source/os_tick.o
+ .debug_info    0x00063199     0x1ee2 ./kernel/source/os_time.o
+ .debug_info    0x0006507b     0x26d3 ./kernel/source/os_tmr.o
+ .debug_info    0x0006774e     0x1500 ./kernel/source/os_var.o
+ .debug_info    0x00068c4e       0x26 ./ports/source/gnu/armv7m_cpu_a.o
+ .debug_info    0x00068c74       0x26 ./ports/source/gnu/armv7m_os_cpu_a.o
+ .debug_info    0x00068c9a     0x1915 ./ports/source/gnu/armv7m_os_cpu_c.o
+ .debug_info    0x0006a5af     0x3db5 ./src/gnss.o
+ .debug_info    0x0006e364     0x4423 ./src/http_client.o
+ .debug_info    0x00072787      0xc8a ./src/leds.o
+ .debug_info    0x00073411     0x4a90 ./src/main.o
+ .debug_info    0x00077ea1      0x7ae ./src/temp_sensor.o
+ .debug_info    0x0007864f      0xa3a ./src/uart.o
 
-.debug_abbrev   0x00000000     0xaa32
+.debug_abbrev   0x00000000     0xaa40
  .debug_abbrev  0x00000000      0x314 ./BSP/bsp_stk_leds.o
  .debug_abbrev  0x00000314      0x13f ./BSP/siliconlabs/generic/source/bsp_cpu.o
  .debug_abbrev  0x00000453      0x260 ./BSP/siliconlabs/generic/source/bsp_os.o
@@ -21188,50 +21188,50 @@ OUTPUT(ArtisanDemoSimplicity.axf elf32-littlearm)
  .debug_abbrev  0x00002365      0x557 ./XBee/xbee_atcmd.o
  .debug_abbrev  0x000028bc      0x2c5 ./XBee/xbee_atmode.o
  .debug_abbrev  0x00002b81      0x2df ./XBee/xbee_cbuf.o
- .debug_abbrev  0x00002e60      0x3c0 ./XBee/xbee_config.o
- .debug_abbrev  0x00003220      0x46e ./XBee/xbee_device.o
- .debug_abbrev  0x0000368e      0x373 ./XBee/xbee_ipv4.o
- .debug_abbrev  0x00003a01      0x25d ./XBee/xbee_platform_efm32.o
- .debug_abbrev  0x00003c5e      0x5b5 ./XBee/xbee_serial_efm32.o
- .debug_abbrev  0x00004213      0x3cf ./common/source/clk/clk.o
- .debug_abbrev  0x000045e2      0x1d1 ./common/source/collections/slist.o
- .debug_abbrev  0x000047b3      0x202 ./common/source/common/common.o
- .debug_abbrev  0x000049b5      0x3da ./common/source/kal/kal_kernel.o
- .debug_abbrev  0x00004d8f      0x1c3 ./common/source/lib/lib_math.o
- .debug_abbrev  0x00004f52      0x446 ./common/source/lib/lib_mem.o
- .debug_abbrev  0x00005398      0x3b6 ./common/source/platform_mgr/platform_mgr.o
- .debug_abbrev  0x0000574e       0x8a ./common/source/rtos/rtos_err_str.o
- .debug_abbrev  0x000057d8      0x322 ./cpu/source/cpu_core.o
- .debug_abbrev  0x00005afa       0x68 ./emlib/em_assert.o
- .debug_abbrev  0x00005b62      0x4dd ./emlib/em_cmu.o
- .debug_abbrev  0x0000603f      0x349 ./emlib/em_core.o
- .debug_abbrev  0x00006388      0x4be ./emlib/em_emu.o
- .debug_abbrev  0x00006846      0x2c5 ./emlib/em_gpio.o
- .debug_abbrev  0x00006b0b      0x3ac ./emlib/em_i2c.o
- .debug_abbrev  0x00006eb7      0x23a ./emlib/em_timer.o
- .debug_abbrev  0x000070f1      0x2e7 ./emlib/em_usart.o
- .debug_abbrev  0x000073d8      0x12b ./kernel/source/os_cfg_app.o
- .debug_abbrev  0x00007503      0x343 ./kernel/source/os_core.o
- .debug_abbrev  0x00007846      0x13e ./kernel/source/os_dbg.o
- .debug_abbrev  0x00007984      0x1d9 ./kernel/source/os_msg.o
- .debug_abbrev  0x00007b5d      0x36e ./kernel/source/os_mutex.o
- .debug_abbrev  0x00007ecb      0x184 ./kernel/source/os_prio.o
- .debug_abbrev  0x0000804f      0x31c ./kernel/source/os_sem.o
- .debug_abbrev  0x0000836b      0x23a ./kernel/source/os_stat.o
- .debug_abbrev  0x000085a5      0x390 ./kernel/source/os_task.o
- .debug_abbrev  0x00008935      0x2c5 ./kernel/source/os_tick.o
- .debug_abbrev  0x00008bfa      0x23a ./kernel/source/os_time.o
- .debug_abbrev  0x00008e34      0x366 ./kernel/source/os_tmr.o
- .debug_abbrev  0x0000919a      0x111 ./kernel/source/os_var.o
- .debug_abbrev  0x000092ab       0x14 ./ports/source/gnu/armv7m_cpu_a.o
- .debug_abbrev  0x000092bf       0x14 ./ports/source/gnu/armv7m_os_cpu_a.o
- .debug_abbrev  0x000092d3      0x2ce ./ports/source/gnu/armv7m_os_cpu_c.o
- .debug_abbrev  0x000095a1      0x4e4 ./src/gnss.o
- .debug_abbrev  0x00009a85      0x556 ./src/http_client.o
- .debug_abbrev  0x00009fdb      0x278 ./src/leds.o
- .debug_abbrev  0x0000a253      0x4f1 ./src/main.o
- .debug_abbrev  0x0000a744      0x182 ./src/temp_sensor.o
- .debug_abbrev  0x0000a8c6      0x16c ./src/uart.o
+ .debug_abbrev  0x00002e60      0x3b3 ./XBee/xbee_config.o
+ .debug_abbrev  0x00003213      0x46e ./XBee/xbee_device.o
+ .debug_abbrev  0x00003681      0x373 ./XBee/xbee_ipv4.o
+ .debug_abbrev  0x000039f4      0x25d ./XBee/xbee_platform_efm32.o
+ .debug_abbrev  0x00003c51      0x5b5 ./XBee/xbee_serial_efm32.o
+ .debug_abbrev  0x00004206      0x3cf ./common/source/clk/clk.o
+ .debug_abbrev  0x000045d5      0x1d1 ./common/source/collections/slist.o
+ .debug_abbrev  0x000047a6      0x202 ./common/source/common/common.o
+ .debug_abbrev  0x000049a8      0x3da ./common/source/kal/kal_kernel.o
+ .debug_abbrev  0x00004d82      0x1c3 ./common/source/lib/lib_math.o
+ .debug_abbrev  0x00004f45      0x446 ./common/source/lib/lib_mem.o
+ .debug_abbrev  0x0000538b      0x3b6 ./common/source/platform_mgr/platform_mgr.o
+ .debug_abbrev  0x00005741       0x8a ./common/source/rtos/rtos_err_str.o
+ .debug_abbrev  0x000057cb      0x322 ./cpu/source/cpu_core.o
+ .debug_abbrev  0x00005aed       0x68 ./emlib/em_assert.o
+ .debug_abbrev  0x00005b55      0x4dd ./emlib/em_cmu.o
+ .debug_abbrev  0x00006032      0x349 ./emlib/em_core.o
+ .debug_abbrev  0x0000637b      0x4be ./emlib/em_emu.o
+ .debug_abbrev  0x00006839      0x2c5 ./emlib/em_gpio.o
+ .debug_abbrev  0x00006afe      0x3ac ./emlib/em_i2c.o
+ .debug_abbrev  0x00006eaa      0x23a ./emlib/em_timer.o
+ .debug_abbrev  0x000070e4      0x2e7 ./emlib/em_usart.o
+ .debug_abbrev  0x000073cb      0x12b ./kernel/source/os_cfg_app.o
+ .debug_abbrev  0x000074f6      0x343 ./kernel/source/os_core.o
+ .debug_abbrev  0x00007839      0x13e ./kernel/source/os_dbg.o
+ .debug_abbrev  0x00007977      0x1d9 ./kernel/source/os_msg.o
+ .debug_abbrev  0x00007b50      0x36e ./kernel/source/os_mutex.o
+ .debug_abbrev  0x00007ebe      0x184 ./kernel/source/os_prio.o
+ .debug_abbrev  0x00008042      0x31c ./kernel/source/os_sem.o
+ .debug_abbrev  0x0000835e      0x23a ./kernel/source/os_stat.o
+ .debug_abbrev  0x00008598      0x390 ./kernel/source/os_task.o
+ .debug_abbrev  0x00008928      0x2c5 ./kernel/source/os_tick.o
+ .debug_abbrev  0x00008bed      0x23a ./kernel/source/os_time.o
+ .debug_abbrev  0x00008e27      0x366 ./kernel/source/os_tmr.o
+ .debug_abbrev  0x0000918d      0x111 ./kernel/source/os_var.o
+ .debug_abbrev  0x0000929e       0x14 ./ports/source/gnu/armv7m_cpu_a.o
+ .debug_abbrev  0x000092b2       0x14 ./ports/source/gnu/armv7m_os_cpu_a.o
+ .debug_abbrev  0x000092c6      0x2ce ./ports/source/gnu/armv7m_os_cpu_c.o
+ .debug_abbrev  0x00009594      0x4e4 ./src/gnss.o
+ .debug_abbrev  0x00009a78      0x54d ./src/http_client.o
+ .debug_abbrev  0x00009fc5      0x278 ./src/leds.o
+ .debug_abbrev  0x0000a23d      0x515 ./src/main.o
+ .debug_abbrev  0x0000a752      0x182 ./src/temp_sensor.o
+ .debug_abbrev  0x0000a8d4      0x16c ./src/uart.o
 
 .debug_loc      0x00000000    0x2f99b
  .debug_loc     0x00000000      0x800 ./BSP/bsp_stk_leds.o
@@ -21410,7 +21410,7 @@ OUTPUT(ArtisanDemoSimplicity.axf elf32-littlearm)
  .debug_aranges
                 0x00001c38       0x20 ./src/uart.o
 
-.debug_ranges   0x00000000     0x51a8
+.debug_ranges   0x00000000     0x5188
  .debug_ranges  0x00000000      0x158 ./BSP/bsp_stk_leds.o
  .debug_ranges  0x00000158       0x20 ./BSP/siliconlabs/generic/source/bsp_cpu.o
  .debug_ranges  0x00000178       0x40 ./BSP/siliconlabs/generic/source/bsp_os.o
@@ -21461,11 +21461,11 @@ OUTPUT(ArtisanDemoSimplicity.axf elf32-littlearm)
  .debug_ranges  0x00004b10      0x130 ./kernel/source/os_tmr.o
  .debug_ranges  0x00004c40       0x48 ./ports/source/gnu/armv7m_os_cpu_c.o
  .debug_ranges  0x00004c88      0x298 ./src/gnss.o
- .debug_ranges  0x00004f20      0x148 ./src/http_client.o
- .debug_ranges  0x00005068       0x38 ./src/leds.o
- .debug_ranges  0x000050a0       0xe0 ./src/main.o
- .debug_ranges  0x00005180       0x18 ./src/temp_sensor.o
- .debug_ranges  0x00005198       0x10 ./src/uart.o
+ .debug_ranges  0x00004f20      0x128 ./src/http_client.o
+ .debug_ranges  0x00005048       0x38 ./src/leds.o
+ .debug_ranges  0x00005080       0xe0 ./src/main.o
+ .debug_ranges  0x00005160       0x18 ./src/temp_sensor.o
+ .debug_ranges  0x00005178       0x10 ./src/uart.o
 
 .debug_macro    0x00000000    0x14a64
  .debug_macro   0x00000000      0x35b ./BSP/bsp_stk_leds.o
@@ -21622,7 +21622,7 @@ OUTPUT(ArtisanDemoSimplicity.axf elf32-littlearm)
  .debug_macro   0x0001470f       0x28 ./src/temp_sensor.o
  .debug_macro   0x00014737      0x32d ./src/uart.o
 
-.debug_line     0x00000000    0x3f293
+.debug_line     0x00000000    0x3f28f
  .debug_line    0x00000000      0xc50 ./BSP/bsp_stk_leds.o
  .debug_line    0x00000c50      0xcfc ./BSP/siliconlabs/generic/source/bsp_cpu.o
  .debug_line    0x0000194c     0x10bb ./BSP/siliconlabs/generic/source/bsp_os.o
@@ -21639,50 +21639,50 @@ OUTPUT(ArtisanDemoSimplicity.axf elf32-littlearm)
  .debug_line    0x0000ba86     0x166d ./XBee/xbee_atcmd.o
  .debug_line    0x0000d0f3     0x1168 ./XBee/xbee_atmode.o
  .debug_line    0x0000e25b     0x1057 ./XBee/xbee_cbuf.o
- .debug_line    0x0000f2b2     0x12e1 ./XBee/xbee_config.o
- .debug_line    0x00010593     0x1340 ./XBee/xbee_device.o
- .debug_line    0x000118d3     0x11b4 ./XBee/xbee_ipv4.o
- .debug_line    0x00012a87      0xf85 ./XBee/xbee_platform_efm32.o
- .debug_line    0x00013a0c     0x1589 ./XBee/xbee_serial_efm32.o
- .debug_line    0x00014f95     0x1a08 ./common/source/clk/clk.o
- .debug_line    0x0001699d     0x124f ./common/source/collections/slist.o
- .debug_line    0x00017bec     0x1203 ./common/source/common/common.o
- .debug_line    0x00018def     0x18ad ./common/source/kal/kal_kernel.o
- .debug_line    0x0001a69c      0xd0a ./common/source/lib/lib_math.o
- .debug_line    0x0001b3a6     0x165e ./common/source/lib/lib_mem.o
- .debug_line    0x0001ca04     0x1491 ./common/source/platform_mgr/platform_mgr.o
- .debug_line    0x0001de95      0xd30 ./common/source/rtos/rtos_err_str.o
- .debug_line    0x0001ebc5     0x128a ./cpu/source/cpu_core.o
- .debug_line    0x0001fe4f      0x12a ./emlib/em_assert.o
- .debug_line    0x0001ff79     0x1ff9 ./emlib/em_cmu.o
- .debug_line    0x00021f72      0xc21 ./emlib/em_core.o
- .debug_line    0x00022b93     0x157a ./emlib/em_emu.o
- .debug_line    0x0002410d      0xbd4 ./emlib/em_gpio.o
- .debug_line    0x00024ce1      0xd9b ./emlib/em_i2c.o
- .debug_line    0x00025a7c      0xba0 ./emlib/em_timer.o
- .debug_line    0x0002661c      0xdcf ./emlib/em_usart.o
- .debug_line    0x000273eb      0xd5c ./kernel/source/os_cfg_app.o
- .debug_line    0x00028147     0x1aba ./kernel/source/os_core.o
- .debug_line    0x00029c01      0xe63 ./kernel/source/os_dbg.o
- .debug_line    0x0002aa64     0x1408 ./kernel/source/os_msg.o
- .debug_line    0x0002be6c     0x16f8 ./kernel/source/os_mutex.o
- .debug_line    0x0002d564     0x136c ./kernel/source/os_prio.o
- .debug_line    0x0002e8d0     0x15ff ./kernel/source/os_sem.o
- .debug_line    0x0002fecf     0x147d ./kernel/source/os_stat.o
- .debug_line    0x0003134c     0x1af2 ./kernel/source/os_task.o
- .debug_line    0x00032e3e     0x14f8 ./kernel/source/os_tick.o
- .debug_line    0x00034336     0x14dc ./kernel/source/os_time.o
- .debug_line    0x00035812     0x179b ./kernel/source/os_tmr.o
- .debug_line    0x00036fad      0xd45 ./kernel/source/os_var.o
- .debug_line    0x00037cf2       0xca ./ports/source/gnu/armv7m_cpu_a.o
- .debug_line    0x00037dbc      0x114 ./ports/source/gnu/armv7m_os_cpu_a.o
- .debug_line    0x00037ed0     0x148e ./ports/source/gnu/armv7m_os_cpu_c.o
- .debug_line    0x0003935e     0x126a ./src/gnss.o
- .debug_line    0x0003a5c8     0x15ad ./src/http_client.o
- .debug_line    0x0003bb75      0xba1 ./src/leds.o
- .debug_line    0x0003c716     0x1651 ./src/main.o
- .debug_line    0x0003dd67      0xb60 ./src/temp_sensor.o
- .debug_line    0x0003e8c7      0x9cc ./src/uart.o
+ .debug_line    0x0000f2b2     0x12df ./XBee/xbee_config.o
+ .debug_line    0x00010591     0x1340 ./XBee/xbee_device.o
+ .debug_line    0x000118d1     0x11b4 ./XBee/xbee_ipv4.o
+ .debug_line    0x00012a85      0xf85 ./XBee/xbee_platform_efm32.o
+ .debug_line    0x00013a0a     0x1589 ./XBee/xbee_serial_efm32.o
+ .debug_line    0x00014f93     0x1a08 ./common/source/clk/clk.o
+ .debug_line    0x0001699b     0x124f ./common/source/collections/slist.o
+ .debug_line    0x00017bea     0x1203 ./common/source/common/common.o
+ .debug_line    0x00018ded     0x18ad ./common/source/kal/kal_kernel.o
+ .debug_line    0x0001a69a      0xd0a ./common/source/lib/lib_math.o
+ .debug_line    0x0001b3a4     0x165e ./common/source/lib/lib_mem.o
+ .debug_line    0x0001ca02     0x1491 ./common/source/platform_mgr/platform_mgr.o
+ .debug_line    0x0001de93      0xd30 ./common/source/rtos/rtos_err_str.o
+ .debug_line    0x0001ebc3     0x128a ./cpu/source/cpu_core.o
+ .debug_line    0x0001fe4d      0x12a ./emlib/em_assert.o
+ .debug_line    0x0001ff77     0x1ff9 ./emlib/em_cmu.o
+ .debug_line    0x00021f70      0xc21 ./emlib/em_core.o
+ .debug_line    0x00022b91     0x157a ./emlib/em_emu.o
+ .debug_line    0x0002410b      0xbd4 ./emlib/em_gpio.o
+ .debug_line    0x00024cdf      0xd9b ./emlib/em_i2c.o
+ .debug_line    0x00025a7a      0xba0 ./emlib/em_timer.o
+ .debug_line    0x0002661a      0xdcf ./emlib/em_usart.o
+ .debug_line    0x000273e9      0xd5c ./kernel/source/os_cfg_app.o
+ .debug_line    0x00028145     0x1aba ./kernel/source/os_core.o
+ .debug_line    0x00029bff      0xe63 ./kernel/source/os_dbg.o
+ .debug_line    0x0002aa62     0x1408 ./kernel/source/os_msg.o
+ .debug_line    0x0002be6a     0x16f8 ./kernel/source/os_mutex.o
+ .debug_line    0x0002d562     0x136c ./kernel/source/os_prio.o
+ .debug_line    0x0002e8ce     0x15ff ./kernel/source/os_sem.o
+ .debug_line    0x0002fecd     0x147d ./kernel/source/os_stat.o
+ .debug_line    0x0003134a     0x1af2 ./kernel/source/os_task.o
+ .debug_line    0x00032e3c     0x14f8 ./kernel/source/os_tick.o
+ .debug_line    0x00034334     0x14dc ./kernel/source/os_time.o
+ .debug_line    0x00035810     0x179b ./kernel/source/os_tmr.o
+ .debug_line    0x00036fab      0xd45 ./kernel/source/os_var.o
+ .debug_line    0x00037cf0       0xca ./ports/source/gnu/armv7m_cpu_a.o
+ .debug_line    0x00037dba      0x114 ./ports/source/gnu/armv7m_os_cpu_a.o
+ .debug_line    0x00037ece     0x148e ./ports/source/gnu/armv7m_os_cpu_c.o
+ .debug_line    0x0003935c     0x126a ./src/gnss.o
+ .debug_line    0x0003a5c6     0x15ad ./src/http_client.o
+ .debug_line    0x0003bb73      0xba1 ./src/leds.o
+ .debug_line    0x0003c714     0x164f ./src/main.o
+ .debug_line    0x0003dd63      0xb60 ./src/temp_sensor.o
+ .debug_line    0x0003e8c3      0x9cc ./src/uart.o
 
 .debug_str      0x00000000   0x20c6e8
  .debug_str     0x00000000   0x1df38e ./BSP/bsp_stk_leds.o
@@ -21717,9 +21717,9 @@ OUTPUT(ArtisanDemoSimplicity.axf elf32-littlearm)
                              0x1f1fd0 (size before relaxing)
  .debug_str     0x001fb9ab      0x117 ./XBee/xbee_cbuf.o
                              0x1f08a1 (size before relaxing)
- .debug_str     0x001fbac2     0x110c ./XBee/xbee_config.o
-                             0x1f3855 (size before relaxing)
- .debug_str     0x001fcbce      0x208 ./XBee/xbee_device.o
+ .debug_str     0x001fbac2     0x1104 ./XBee/xbee_config.o
+                             0x1f384d (size before relaxing)
+ .debug_str     0x001fcbc6      0x210 ./XBee/xbee_device.o
                              0x1f2da2 (size before relaxing)
  .debug_str     0x001fcdd6      0x266 ./XBee/xbee_ipv4.o
                              0x1f2b17 (size before relaxing)
@@ -21796,11 +21796,11 @@ OUTPUT(ArtisanDemoSimplicity.axf elf32-littlearm)
  .debug_str     0x0020b2b5      0x511 ./src/gnss.o
                              0x1f2dfd (size before relaxing)
  .debug_str     0x0020b7c6      0x930 ./src/http_client.o
-                             0x1f4f50 (size before relaxing)
+                             0x1f4f49 (size before relaxing)
  .debug_str     0x0020c0f6       0xee ./src/leds.o
                              0x1e0af4 (size before relaxing)
  .debug_str     0x0020c1e4      0x331 ./src/main.o
-                             0x1f6693 (size before relaxing)
+                             0x1f6685 (size before relaxing)
  .debug_str     0x0020c515      0x1bb ./src/temp_sensor.o
                              0x1dfbc3 (size before relaxing)
  .debug_str     0x0020c6d0       0x18 ./src/uart.o

@@ -166,7 +166,8 @@ ERR_EXIT:
   return ret;
 }
 /***************************************************************************//**
- * @brief prints rssi and network connected to
+ * @brief prints association indication, rssi, and network connected to. Will change
+ * hardware configuration to send messages over NBIOT if not already configured to do so
  * @param xbee  the object to read from
  * @return 0 if successful -1 if unsuccessful
  ******************************************************************************/
@@ -174,7 +175,6 @@ int printConnectionStatus(xbee_dev_t *xbee)
 {
 	int ret;
 	char buff[RESPONSE_BUFF_SIZE];
-	char message[100];
 	RTOS_ERR err;
 	/* Make sure we are operating on a valid xbee */
 	if (xbee == NULL) {
