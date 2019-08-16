@@ -22,7 +22,6 @@
 #define TX_BREAK_RESPONSE_TIME 3000
 #define TX_BREAK_FLUSH_TIME 5000
 #define RESPONSE_BUFF_SIZE 108
-#define XBEE_DEFAULT_APN "-"
 
 
 #ifndef XBEE_TARGET_APN
@@ -491,15 +490,16 @@ int configureAPN(xbee_dev_t *xbee)
   printf("Existing APN set as %s\r\n\r\n", buff);
 #endif
   /* Check if the APN is what we expect, if it isn't try to set it */
-  if (strcmp(buff, "m2m.com.attz"))
+  if (strcmp(buff, XBEE_DEFAULT_APN))
   {
     /* try to set the APN */
-    xbee_atmode_send_request(xbee, "AN""m2m.com.attz");
+	sprintf(buff, "AN%s", XBEE_DEFAULT_APN);
+    xbee_atmode_send_request(xbee, buff);
     ret = getOKResponse(xbee, buff, RESPONSE_BUFF_SIZE);
     if (ret < 0) {
       goto ERR_EXIT;
     }
-    printf("New APN set as m2m.com.attz\r\n\r\n");
+    printf("New APN set as %s\r\n\r\n", XBEE_DEFAULT_APN);
 
     /* Write settings to non-volatile memory */
     xbee_atmode_send_request(xbee, "WR");
