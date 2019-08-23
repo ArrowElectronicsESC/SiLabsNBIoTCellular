@@ -21,6 +21,6 @@
 //Minimum time between updates (mS)- Will throttle the Cell TX - Set to 0 to remove
 #define MIN_CONN_IVL 1000 //One second delay
 //Maximum updated pushed to cloud - Prevents another crazy data bill....
-#define DEV_DATA_LIMIT 5
+#define DEV_DATA_LIMIT 1000
 
 #endif // IOT_CONFIG_H

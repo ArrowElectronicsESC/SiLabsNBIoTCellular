@@ -570,7 +570,6 @@ int xbee_frame_write( xbee_dev_t *xbee, const void FAR *header,
 				__FUNCTION__, cts ? "yes" : "no", free, framesize);
 		#endif
 		printf("BROKEN HERE: ");
-		char message[100];
 		printf("Framesize: %d, Free: %d, Used: %d\r\n\r\n", framesize, free, used);
 		return (framesize - free > used) ? -EMSGSIZE : -EBUSY;
 	}

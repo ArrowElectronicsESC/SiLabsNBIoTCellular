@@ -713,6 +713,7 @@ static void cellTXTask(void *p_arg) {
 		OSMutexPend((OS_MUTEX *) &CellTXBuffMutex, (OS_TICK) 0,
 				(OS_OPT) OS_OPT_PEND_BLOCKING, (CPU_TS*) &ts, (RTOS_ERR*) &err);
 		strcpy(local_in_cpy, local_in_buff); //Read in the data and clear the Mutex - Prevents long blocking from cell and lost data
+		sprintf(local_in_cpy, "%s Iteration: %d", local_in_cpy, iterations);
 		local_in_buff[0] = 0; //Clear the buffer, probably not needed but it makes me feel good, so i left it.
 		local_in_buff_count = 0; //This part and the SEM are probably redundant, but we may use this elsewhere
 		OSMutexPost(&CellTXBuffMutex, OS_OPT_POST_NONE, &err);
